@@ -6,16 +6,19 @@ public class ParticleCollide : MonoBehaviour
 {
     public Transform particle;
 
+    private ParticleSystem.EmissionModule emissionModule;
+
     // Start is called before the first frame update
     void Start()
     {
-        particle.GetComponent<ParticleSystem>().enableEmission = false;
+        emissionModule = particle.GetComponent<ParticleSystem>().emission;
+        emissionModule.enabled = false;
     }
 
     // Update is called once per frame
     void OnTriggerEnter2D()
     {
-        particle.GetComponent<ParticleSystem>().enableEmission = true;
+        emissionModule.enabled = true;
         particle.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 1);
 
         StartCoroutine(stopParticles());
@@ -25,6 +28,6 @@ public class ParticleCollide : MonoBehaviour
     {
         yield return new WaitForSeconds(.4f);
 
-        particle.GetComponent<ParticleSystem>().enableEmission = false;
+        emissionModule.enabled = false;
     }
 }

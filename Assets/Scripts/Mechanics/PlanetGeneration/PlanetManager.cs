@@ -20,6 +20,8 @@ public class PlanetManager : MonoBehaviour
     [Range(5, 100)]
     public int totalSections;
     public Tile tile;//temporary (replace with class that alters the 1's in the generated tile mapping array)
+    [SerializeField]
+    private Dictionary<int, int[,]> planetTileMappings;
 
     //player deatils
     public Transform playerTransform;
@@ -31,6 +33,8 @@ public class PlanetManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        this.planetTileMappings = SaveLoadManager.loadTileMappings();
+
         //create a new planet generator
         //(figure out how to determine what kind later)
         this.sectionGen = new StandardSectionGenerator(sectionWidth,
@@ -44,18 +48,23 @@ public class PlanetManager : MonoBehaviour
         temporarySectionIndexes = new int[] { this.totalSections - 1, 0, 1 };
         int startingX = -this.sectionWidth;
 
-        for (int i = 0; i < temporarySectionIndexes.Length; i++)
-        {
-            if (!this.sectionGen.loadSection(temporarySectionIndexes[i]))
-            {
-                int[,] tileMapping = this.sectionGen.generateSection();
-                //passing through placed sections (places all to the right of first placed)
-                GameObject section = this.sectionGen.buildSection(tileMapping, startingX + (this.sectionWidth * i));
-                this.sectionGen.saveSection(section, temporarySectionIndexes[i]);
+        for (int i = 0; i < temporarySectionIndexes.Length; i++) {
+            int[,] tileMapping;
+            //if section not in save data, create new section
+            if (!this.planetTileMappings.ContainsKey(temporarySectionIndexes[i])) {
+                tileMapping = this.sectionGen.generateSection();
+                planetTileMappings.Add(temporarySectionIndexes[i], tileMapping);
+            } else {
+                tileMapping = planetTileMappings[temporarySectionIndexes[i]];
             }
+
+            //passing through placed sections (places all to the right of first placed)
+            GameObject section = this.sectionGen.buildSection(tileMapping, startingX + (this.sectionWidth * i));
         }
 
-        startTestTimer();
+        SaveLoadManager.saveTileMappings(this.planetTileMappings);
+
+        //startTestTimer();
     }
 
     //EVERYTHING BELOW FOR TESTING PURPOSES
@@ -79,20 +88,23 @@ public class PlanetManager : MonoBehaviour
                     temporarySectionIndexes[i] = this.totalSections - temporarySectionIndexes[i];
                 }
             }
-            if (!this.sectionGen.loadSection(temporarySectionIndexes[0]))
-            {
-                int[,] tileMapping = this.sectionGen.generateSection();
-                //passing through placed sections (places all to the right of first placed)
-                GameObject section = this.sectionGen.buildSection(tileMapping, (this.sectionWidth * testInt));
-                testInt--;
-                this.sectionGen.saveSection(section, temporarySectionIndexes[0]);
+            
+            int[,] tileMapping;
+            //if section not in save data, create new section
+            if (!this.planetTileMappings.ContainsKey(temporarySectionIndexes[0])) {
+                tileMapping = this.sectionGen.generateSection();
+                planetTileMappings.Add(temporarySectionIndexes[0], tileMapping);
+            } else {
+                tileMapping = planetTileMappings[temporarySectionIndexes[0]];
             }
+
+            //passing through placed sections (places all to the right of first placed)
+            GameObject section = this.sectionGen.buildSection(tileMapping, (this.sectionWidth * testInt));
+            testInt--;
+
+            SaveLoadManager.saveTileMappings(this.planetTileMappings);
+
             Invoke("_tick", 1f);
         }
-    }
-
-    void Update()
-    {
-        //Debug.Log(playerTransform.position.x);
     }
 }
