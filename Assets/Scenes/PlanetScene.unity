@@ -331,7 +331,7 @@ MonoBehaviour:
     type: 3}
   tileMapGenerator: {fileID: 1600717958}
   sectionsInView: 0
-  totalSections: 6
+  totalSections: 5
   tile: {fileID: 11400000, guid: 0ce0fccee4b9ca14ba05442ecde57a2c, type: 2}
   playerTransform: {fileID: 965059814}
 --- !u!4 &759897427
@@ -5366,23 +5366,23 @@ MonoBehaviour:
   - value: 2
     weighting: 0
   - value: 3
-    weighting: 1
+    weighting: 0
   - value: 4
-    weighting: 1
+    weighting: 0
   - value: 5
-    weighting: 1
+    weighting: 0
   - value: 6
-    weighting: 1
+    weighting: 0
   - value: 7
-    weighting: 1
+    weighting: 0
   - value: 8
-    weighting: 2
+    weighting: 0
   - value: 9
-    weighting: 2
+    weighting: 0
   - value: 10
-    weighting: 8
+    weighting: 0
   - value: 11
-    weighting: 20
+    weighting: 0
   - value: 12
     weighting: 50
   - value: 13
@@ -5398,15 +5398,15 @@ MonoBehaviour:
   - value: 18
     weighting: 50
   - value: 19
-    weighting: 50
+    weighting: 0
   - value: 20
-    weighting: 25
+    weighting: 0
   - value: 21
-    weighting: 10
+    weighting: 0
   - value: 22
-    weighting: 4
+    weighting: 0
   - value: 23
-    weighting: 2
+    weighting: 0
 --- !u!4 &1600717959
 Transform:
   m_ObjectHideFlags: 0
