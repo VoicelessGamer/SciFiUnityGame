@@ -33,5 +33,5 @@ public abstract class SectionGenerator: MonoBehaviour {
 
     public abstract int[,] generateSection();
 
-    public abstract GameObject buildSection(int[,] tileMapping, int startingX);
+    public abstract GameObject buildSection(int[,] tileMapping, int xPos);
 }

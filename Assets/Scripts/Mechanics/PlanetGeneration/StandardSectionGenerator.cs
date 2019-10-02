@@ -28,9 +28,9 @@ public class StandardSectionGenerator : SectionGenerator {
         return this.tileMapGenerator.generateMap(this.width, this.height);
     }
 
-    public override GameObject buildSection(int[,] tileMapping, int startingX) {
+    public override GameObject buildSection(int[,] tileMapping, int xPos) {
         //Generate in instantiated clone of the section prefab
-        GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3(0, 0, 0), Quaternion.identity, this.tileMapContainer.transform);
+        GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3(xPos, 0, 0), Quaternion.identity, this.tileMapContainer.transform);
         //get the tile map component to add tiles to
         Tilemap section = (Tilemap)instantiatedSection.GetComponent(typeof(Tilemap));
 
@@ -38,7 +38,7 @@ public class StandardSectionGenerator : SectionGenerator {
             for(int y = 0; y < this.height; y++) {
                 if(tileMapping[x,y] == 1) {
                     //set up new vector position for the current tile
-                    Vector3Int pos = new Vector3Int(startingX + x - this.initialX, this.initialY - y - 1, 0);
+                    Vector3Int pos = new Vector3Int(x - this.initialX, this.initialY - y - 1, 0);
                     //add tile in position
                     section.SetTile(pos, this.tile);
                 }

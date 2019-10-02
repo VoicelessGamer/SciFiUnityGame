@@ -28,12 +28,15 @@ public class PlanetManager : MonoBehaviour
 
     //temp details
     private StandardSectionGenerator sectionGen;
-    int[] temporarySectionIndexes;
+    private List<Section> sections;
+    private float[] xBoundaries = new float[2];
 
     // Start is called before the first frame update
     void Start()
     {
         this.planetTileMappings = SaveLoadManager.loadTileMappings();
+
+        this.sections = new List<Section>();
 
         //create a new planet generator
         //(figure out how to determine what kind later)
@@ -45,66 +48,120 @@ public class PlanetManager : MonoBehaviour
             tile);
 
         //eventually array will be generated from a starting section and surrounding positions
-        temporarySectionIndexes = new int[] { this.totalSections - 1, 0, 1 };
-        int startingX = -this.sectionWidth;
-
-        for (int i = 0; i < temporarySectionIndexes.Length; i++) {
-            int[,] tileMapping;
-            //if section not in save data, create new section
-            if (!this.planetTileMappings.ContainsKey(temporarySectionIndexes[i])) {
-                tileMapping = this.sectionGen.generateSection();
-                planetTileMappings.Add(temporarySectionIndexes[i], tileMapping);
-            } else {
-                tileMapping = planetTileMappings[temporarySectionIndexes[i]];
-            }
-
-            //passing through placed sections (places all to the right of first placed)
-            GameObject section = this.sectionGen.buildSection(tileMapping, startingX + (this.sectionWidth * i));
-        }
+        generateSectionsInView(0);
 
         SaveLoadManager.saveTileMappings(this.planetTileMappings);
-
-        //startTestTimer();
     }
 
-    //EVERYTHING BELOW FOR TESTING PURPOSES
+    public void generateSectionsInView(int centredSection) {
+        float halfWidth = (this.sectionWidth / 2);
 
-    private int tr = 15;
-    private int testInt = -2;
-    void startTestTimer()
-    {
-        Invoke("_tick", 1f);
-    }
-    void _tick()
-    {
-        tr--;
-        if (tr > 0)
-        {
-            for (int i = 0; i < temporarySectionIndexes.Length; i++)
-            {
-                temporarySectionIndexes[i] = temporarySectionIndexes[i] - 1;
-                if (temporarySectionIndexes[i] < 0)
-                {
-                    temporarySectionIndexes[i] = this.totalSections - temporarySectionIndexes[i];
-                }
-            }
-            
+        //Currently set to 3 sections in view
+        //Centred section and the map section either side of it will be generated
+        int[] sectionIndices = new int[] { centredSection != 0 ? centredSection - 1 :this.totalSections - 1, centredSection, centredSection + 1 };
+        int initialX = -this.sectionWidth;
+
+        for (int i = 0; i < sectionIndices.Length; i++) {
             int[,] tileMapping;
+            int index = sectionIndices[i];
             //if section not in save data, create new section
-            if (!this.planetTileMappings.ContainsKey(temporarySectionIndexes[0])) {
+            if (!this.planetTileMappings.ContainsKey(index)) {
                 tileMapping = this.sectionGen.generateSection();
-                planetTileMappings.Add(temporarySectionIndexes[0], tileMapping);
+                this.planetTileMappings.Add(index, tileMapping);
             } else {
-                tileMapping = planetTileMappings[temporarySectionIndexes[0]];
+                tileMapping = this.planetTileMappings[index];
             }
 
-            //passing through placed sections (places all to the right of first placed)
-            GameObject section = this.sectionGen.buildSection(tileMapping, (this.sectionWidth * testInt));
-            testInt--;
+            //building section, sending through the section x position to be placed
+            GameObject section = this.sectionGen.buildSection(tileMapping, initialX + (this.sectionWidth * i));
+            section.name = "Section-" + index;
 
-            SaveLoadManager.saveTileMappings(this.planetTileMappings);
+            //set the boundaries, for the player to cross to load next and delete furthest sections, to the edges of the centred section
+            if(index == centredSection) {
+                xBoundaries[0] = section.transform.position.x - halfWidth;
+                xBoundaries[1] = section.transform.position.x + halfWidth;
+            }
 
-            Invoke("_tick", 1f);
+            //store for later use (loading new sections, deleting old)
+            this.sections.Add(new Section(index, section));
+        }
+    }
+
+    /*
+    Currently set up to work with 3 sections in view.
+    Needs work if that value changes
+     */
+    public void shiftView(int dir) {
+        float halfWidth = (this.sectionWidth / 2);
+        int[,] tileMapping;
+        
+        if(dir == 0) {
+            //left
+            //update boundaries
+            GameObject go = this.sections[0].getGameObject();
+            xBoundaries[0] = go.transform.position.x - halfWidth;
+            xBoundaries[1] = go.transform.position.x + halfWidth;
+            
+            //get index of the section to be created (wrapping if needed)
+            int index = this.sections[0].getSectionId() - 1;
+            index = index == -1 ? this.totalSections - 1 : index;
+
+            //if section not in save data, create new section
+            if (!this.planetTileMappings.ContainsKey(index)) {
+                tileMapping = this.sectionGen.generateSection();
+                this.planetTileMappings.Add(index, tileMapping);
+            } else {
+                tileMapping = this.planetTileMappings[index];
+            }
+
+            //building section, sending through the section x position to be placed
+            GameObject section = this.sectionGen.buildSection(tileMapping, (int)(go.transform.position.x - this.sectionWidth));
+            section.name = "Section-" + index;
+            
+            //destroy right section
+            Destroy(this.sections[2].getGameObject());
+            this.sections.Remove(this.sections[2]);
+
+            //insert new section
+            this.sections.Insert(0, new Section(index, section));
+        } else {
+            //right
+            //update boundaries
+            GameObject go = this.sections[2].getGameObject();
+            xBoundaries[0] = go.transform.position.x - halfWidth;
+            xBoundaries[1] = go.transform.position.x + halfWidth;
+            
+            //get index of the section to be created (wrapping if needed)
+            int index = this.sections[2].getSectionId() + 1;
+            index = index == this.totalSections ? 0 : index;
+
+            //if section not in save data, create new section
+            if (!this.planetTileMappings.ContainsKey(index)) {
+                tileMapping = this.sectionGen.generateSection();
+                this.planetTileMappings.Add(index, tileMapping);
+            } else {
+                tileMapping = this.planetTileMappings[index];
+            }
+
+            //building section, sending through the section x position to be placed
+            GameObject section = this.sectionGen.buildSection(tileMapping, (int)(go.transform.position.x + this.sectionWidth));
+            section.name = "Section-" + index;
+            
+            //destroy left section
+            Destroy(this.sections[0].getGameObject());
+            this.sections.Remove(this.sections[0]);
+
+            //insert new section
+            this.sections.Add(new Section(index, section));
+        }
+    }
+
+    void Update() {
+        //builds and delete sections when the player crosses a boundary
+        if(playerTransform.position.x < xBoundaries[0]) {
+            shiftView(0);
+        } else if(playerTransform.position.x > xBoundaries[1]) {
+            shiftView(1);
         }
     }
 }
