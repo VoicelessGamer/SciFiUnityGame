@@ -158,12 +158,12 @@ namespace Platformer.Mechanics
                             velocity = velocity - projection * currentNormal;
                         }
                     }
-                    else
+                    /*else //this causes played to stop as soon it hits a new tile when jumping up. We may need to see what happens when we hit floating paltforms etc
                     {
                         //We are airborne, but hit something, so cancel vertical up and horizontal velocity.
                         velocity.x *= 0;
                         velocity.y = Mathf.Min(velocity.y, 0);
-                    }
+                    }*/
                     //remove shellDistance from actual move distance.
                     var modifiedDistance = hitBuffer[i].distance - shellRadius;
                     distance = modifiedDistance < distance ? modifiedDistance : distance;
