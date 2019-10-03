@@ -12,9 +12,9 @@ public class Orbit : MonoBehaviour {
     private float semiMinorAxis;
     private float semiMajorAxis;
     private float eccentricity;
-    private Transform foci1;
-    private Transform foci2;
-    private Transform centre;
+    private Vector3 foci1;
+    private Vector3 foci2;
+    private Vector3 centre;
 
     // Start is called before the first frame update
     void Start()
@@ -22,10 +22,10 @@ public class Orbit : MonoBehaviour {
         float minimumFociDistance = ((CircleCollider2D)orbitingObject.GetComponent(typeof(CircleCollider2D))).radius + 
             ((CircleCollider2D)gameObject.GetComponent(typeof(CircleCollider2D))).radius + minimumPlanetSeparation;
 
-        foci1 = orbitingObject.transform;
-        foci2 = Random.Range(minimumFociDistance, minimumFociDistance + fociRange);
+        foci1 = orbitingObject.transform.position;
+        foci2 = new Vector3(Random.Range(minimumFociDistance, minimumFociDistance + fociRange), 0, 0);
 
-        centre = new Vector3((foci2.position.x - foci1.position.x) / 2, (foci2.position.y - foci1.position.y) / 2, 0);
+        centre = new Vector3((foci2.x - foci1.x) / 2, (foci2.y - foci1.y) / 2, 0);
 
         
     }
