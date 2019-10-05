@@ -380,7 +380,7 @@ MonoBehaviour:
     type: 3}
   moonPrefab: {fileID: 8164724022982081114, guid: c849feb2d62949544a247fc911e7bd12,
     type: 3}
-  totalPlanets: 4
+  totalPlanets: 5
 --- !u!4 &1608242980
 Transform:
   m_ObjectHideFlags: 0

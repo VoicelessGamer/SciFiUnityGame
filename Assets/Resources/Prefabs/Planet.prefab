@@ -107,11 +107,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 7612232615157878001}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c118ec631e44f34f830dd8c1aaf4b89, type: 3}
+  m_Script: {fileID: 11500000, guid: 830853366e696fd4397375c15cc06c86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  radius: 3.4
+  mass: 597
+  radiusModifier: 1
   minFociRadius: 1
   maxFociRadius: 200
-  minPlanetSeparation: 2
+  minPlanetSeparation: 10
   fociSeparationRange: 100
-  planetVelocity: 20
+  planetVelocity: 0.1
+  testObject: {fileID: 0}
+  testObject2: {fileID: 0}

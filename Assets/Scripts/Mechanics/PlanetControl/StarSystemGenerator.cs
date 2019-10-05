@@ -16,12 +16,12 @@ public class StarSystemGenerator : MonoBehaviour
 
         for(int i = 0; i < this.totalPlanets; i++) {
             GameObject planet = (GameObject)Instantiate(planetPrefab, centreMass.transform);
-            Orbit planetOrbit = ((Orbit)planet.GetComponent(typeof(Orbit)));
-            planetOrbit.setupOrbit();
+            OrbitingBody planetBody = ((OrbitingBody)planet.GetComponent(typeof(OrbitingBody)));
+            planetBody.setupOrbit();
             
             GameObject moon = (GameObject)Instantiate(moonPrefab, planet.transform);
-            Orbit moonOrbit = ((Orbit)moon.GetComponent(typeof(Orbit)));
-            moonOrbit.setupOrbit();
+            OrbitingBody moonBody = ((OrbitingBody)moon.GetComponent(typeof(OrbitingBody)));
+            moonBody.setupOrbit();
         }
     }
 }

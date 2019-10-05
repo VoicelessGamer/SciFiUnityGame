@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Orbit : MonoBehaviour {
-
+public class OrbitingBody : CelestialBody {
+    
+    [Header("Orbit Details")]
     public float minFociRadius;
     public float maxFociRadius;
     public float minPlanetSeparation;
     public float fociSeparationRange;
-    public float planetVelocity;
     
     private float semiMinorAxis;
     private float semiMajorAxis;
@@ -62,15 +62,19 @@ public class Orbit : MonoBehaviour {
     // Update is called once per frame
     void FixedUpdate()
     {
-        currentTheta += (planetVelocity * Time.deltaTime);
+        currentTheta += (calculateOrbitalVelocity() * Time.deltaTime);
         gameObject.transform.localPosition = getPositionInOrbit(currentTheta);
     }
 
     private Vector3 getPositionInOrbit(float theta) {
         theta = theta * Mathf.Deg2Rad;
         
-        return new Vector3((semiMajorAxis * Mathf.Cos(theta) * Mathf.Cos(ellipseRotation)) - (semiMinorAxis * Mathf.Sin(theta) * Mathf.Sin(ellipseRotation)) + localCentreVector.x,
-            (semiMajorAxis * Mathf.Cos(theta) * Mathf.Sin(ellipseRotation)) + (semiMinorAxis * Mathf.Sin(theta) * Mathf.Cos(ellipseRotation)) + localCentreVector.y,
+        return new Vector3((semiMajorAxis * Mathf.Cos(theta) * Mathf.Cos(ellipseRotation)) - (semiMinorAxis * Mathf.Sin(theta) * Mathf.Sin(ellipseRotation)) - localCentreVector.x,
+            (semiMajorAxis * Mathf.Cos(theta) * Mathf.Sin(ellipseRotation)) + (semiMinorAxis * Mathf.Sin(theta) * Mathf.Cos(ellipseRotation)) - localCentreVector.y,
             0);
+    }
+
+    public float calculateOrbitalVelocity() {
+        return (Mathf.Sqrt((this.gravitationalConstant * ((CelestialBody)gameObject.transform.parent.GetComponent(typeof(CelestialBody))).mass) / Mathf.Sqrt(Mathf.Pow(gameObject.transform.position.x - foci1.x, 2.0f) + Mathf.Pow(gameObject.transform.position.y - foci1.y, 2.0f))));
     }
 }

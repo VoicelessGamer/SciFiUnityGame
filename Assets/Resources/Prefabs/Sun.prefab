@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5064476720325628468}
   - component: {fileID: 5064476720325628467}
   - component: {fileID: 5064476720325628466}
+  - component: {fileID: 59824359055111449}
   m_Layer: 0
   m_Name: Sun
   m_TagString: Untagged
@@ -97,3 +98,18 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 16.34
+--- !u!114 &59824359055111449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5064476720325628465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a73f05295e966f040af0c29ad95a5fdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 16.34
+  mass: 200000
+  radiusModifier: 1
