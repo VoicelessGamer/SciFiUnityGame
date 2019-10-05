@@ -5,9 +5,9 @@ using UnityEngine;
 public class Orbit : MonoBehaviour {
 
     public GameObject orbitingObject;
-    public float minimumFociRadius;
-    public float maximumFociRadius;
-    public float minimumFociSeparation;
+    public float minFociRadius;
+    public float maxFociRadius;
+    public float minPlanetSeparation;
     public float fociSeparationRange;
     public float planetVelocity;
     
@@ -17,36 +17,31 @@ public class Orbit : MonoBehaviour {
     private Vector3 foci1;
     private Vector3 foci2;
     private Vector3 centre;
+    private float ellipseRotation;
 
     //TESTING
     public GameObject testObject;
     public GameObject testObject2;
     public GameObject testObject3;
-
     private float currentTheta;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
 
-        float fociRadius = Random.Range(minimumFociRadius, maximumFociRadius);
+        float fociRadius = Random.Range(minFociRadius, maxFociRadius);
         float fociRotation = Random.Range(0, 360);
 
         //first foci point is the centre of the orbiting object
-        //second foci point is randomly chosen
+        //second foci point is randomly chosen distance and rotation from the first
         foci1 = orbitingObject.transform.position;
         foci2 = new Vector3(fociRadius * Mathf.Sin(fociRotation), fociRadius * Mathf.Cos(fociRotation), 0);
 
-        float centreMassDistance = ((CircleCollider2D)orbitingObject.GetComponent(typeof(CircleCollider2D))).radius +
-            ((CircleCollider2D)gameObject.GetComponent(typeof(CircleCollider2D))).radius;
-
-        //randomly generate the planet position
-        //gameObject.transform.position.x = r1 + r2 + Random.Range(minimumPlanetDistance, maximumPlanetDistance);
+        //radius of both planetary object added together with the minimum separation between the 2 planetary objects
+        float minDistanceFromFoci = ((CircleCollider2D)orbitingObject.GetComponent(typeof(CircleCollider2D))).radius +
+            ((CircleCollider2D)gameObject.GetComponent(typeof(CircleCollider2D))).radius + minPlanetSeparation;
 
         //minimum distance planet centre should be from either foci to ensure no collision with orbiting object
-        float minDistanceFromFoci = centreMassDistance + minimumFociSeparation;
-        float maxDistanceFromFoci = minDistanceFromFoci + fociSeparationRange;
-        float distanceFromFoci = Random.Range(minDistanceFromFoci, maxDistanceFromFoci);
+        float distanceFromFoci = Random.Range(minDistanceFromFoci, minDistanceFromFoci + fociSeparationRange);
 
         //distance between the 2 foci points
         float fociDistance = Mathf.Sqrt(Mathf.Pow(foci2.x - foci1.x, 2.0f) + Mathf.Pow(foci2.y - foci1.y, 2.0f));
@@ -55,15 +50,14 @@ public class Orbit : MonoBehaviour {
         centre = new Vector3((foci2.x - foci1.x) / 2, (foci2.y - foci1.y) / 2, 0);
 
         semiMajorAxis = (fociDistance / 2) + distanceFromFoci;
-        //semiMajorAxis = Mathf.Sqrt(Mathf.Pow(gameObject.transform.position.x - centre.x, 2.0f) + Mathf.Pow(gameObject.transform.position.y - centre.y, 2.0f));
-
-        //float centreToFoci = Mathf.Sqrt(Mathf.Pow(foci2.x - centre.x, 2.0f) + Mathf.Pow(foci2.y - centre.y, 2.0f));
 
         eccentricity = (fociDistance / 2) / semiMajorAxis;
 
         semiMinorAxis = semiMajorAxis * Mathf.Sqrt(1 - Mathf.Pow(eccentricity, 2.0f));
 
-        //Testing
+        ellipseRotation = Mathf.Atan((foci2.y - foci1.y) / (foci2.x - foci1.x));
+
+        //Testing        
         GameObject go = (GameObject)Instantiate(testObject2, foci1, Quaternion.identity);
         go = (GameObject)Instantiate(testObject2, foci2, Quaternion.identity);
         go = (GameObject)Instantiate(testObject3, centre, Quaternion.identity);
@@ -78,7 +72,7 @@ public class Orbit : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         currentTheta += (planetVelocity * Time.deltaTime);
         gameObject.transform.position = getPositionInOrbit(currentTheta);
@@ -86,6 +80,10 @@ public class Orbit : MonoBehaviour {
     }
 
     private Vector3 getPositionInOrbit(float theta) {
-        return new Vector3((centre.x - foci1.x) + (semiMajorAxis * Mathf.Cos(theta)), (centre.y - foci1.y) + (semiMinorAxis * Mathf.Sin(theta)), 0);
+        theta = theta * Mathf.Deg2Rad;
+        
+        return new Vector3((semiMajorAxis * Mathf.Cos(theta) * Mathf.Cos(ellipseRotation)) - (semiMinorAxis * Mathf.Sin(theta) * Mathf.Sin(ellipseRotation)) + centre.x,
+            (semiMajorAxis * Mathf.Cos(theta) * Mathf.Sin(ellipseRotation)) + (semiMinorAxis * Mathf.Sin(theta) * Mathf.Cos(ellipseRotation)) + centre.y,
+            0);
     }
 }
