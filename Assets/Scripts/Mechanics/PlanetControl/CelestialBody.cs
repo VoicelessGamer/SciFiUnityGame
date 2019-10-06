@@ -9,4 +9,9 @@ public class CelestialBody : MonoBehaviour {
 
     //modified constant (Real: 0.0000000000667408f)
     protected float gravitationalConstant = 0.00000667408f;
+
+    public void loadDetails(float radius, float mass) {
+        this.radius = radius;
+        this.mass = mass;
+    }
 }

@@ -25,8 +25,22 @@ public class OrbitingBody : CelestialBody {
     private float sineEllipseRotation;
     private float distanceFromFoci;
 
-    public float getDistanceFromFoci() {
-        return distanceFromFoci;
+    public void loadDetails(OrbitalDetails orbitalDetails) {
+        base.loadDetails(orbitalDetails.getRadius(), orbitalDetails.getMass());
+
+        this.semiMinorAxis = orbitalDetails.getSemiMinorAxis();
+        this.semiMajorAxis = orbitalDetails.getSemiMajorAxis();
+        this.eccentricity = orbitalDetails.getEccentricity();
+        this.foci1 = new Vector3(orbitalDetails.getFoci1()[0], orbitalDetails.getFoci1()[1], orbitalDetails.getFoci1()[2]);
+        this.foci2 = new Vector3(orbitalDetails.getFoci2()[0], orbitalDetails.getFoci2()[1], orbitalDetails.getFoci2()[2]);
+        this.centre = new Vector3(orbitalDetails.getCentre()[0], orbitalDetails.getCentre()[1], orbitalDetails.getCentre()[2]);
+        this.localCentreVector = new Vector3(orbitalDetails.getLocalCentreVector()[0], orbitalDetails.getLocalCentreVector()[1], orbitalDetails.getLocalCentreVector()[2]);
+        this.currentTheta = orbitalDetails.getCurrentTheta();
+        this.cosineEllipseRotation = orbitalDetails.getCosineEllipseRotation();
+        this.sineEllipseRotation = orbitalDetails.getSineEllipseRotation();
+        this.distanceFromFoci = orbitalDetails.getDistanceFromFoci();
+
+        gameObject.transform.localPosition = getPositionInOrbit(currentTheta);
     }
 
     public void setupOrbit() {
@@ -87,5 +101,93 @@ public class OrbitingBody : CelestialBody {
 
     public float calculateOrbitalVelocity() {
         return (Mathf.Sqrt((this.gravitationalConstant * ((CelestialBody)gameObject.transform.parent.GetComponent(typeof(CelestialBody))).mass) / Mathf.Sqrt(Mathf.Pow(gameObject.transform.position.x - foci1.x, 2.0f) + Mathf.Pow(gameObject.transform.position.y - foci1.y, 2.0f))));
+    }    
+
+    public float getSemiMinorAxis() {
+        return this.semiMinorAxis;
+    }
+
+    public void setSemiMinorAxis(float semiMinorAxis) {
+        this.semiMinorAxis = semiMinorAxis;
+    }
+
+    public float getSemiMajorAxis() {
+        return this.semiMajorAxis;
+    }
+
+    public void setSemiMajorAxis(float semiMajorAxis) {
+        this.semiMajorAxis = semiMajorAxis;
+    }
+
+    public float getEccentricity() {
+        return this.eccentricity;
+    }
+
+    public void setEccentricity(float eccentricity) {
+        this.eccentricity = eccentricity;
+    }
+
+    public Vector3 getFoci1() {
+        return this.foci1;
+    }
+
+    public void setFoci1(Vector3 foci1) {
+        this.foci1 = foci1;
+    }
+
+    public Vector3 getFoci2() {
+        return this.foci2;
+    }
+
+    public void setFoci2(Vector3 foci2) {
+        this.foci2 = foci2;
+    }
+
+    public Vector3 getCentre() {
+        return this.centre;
+    }
+
+    public void setCentre(Vector3 centre) {
+        this.centre = centre;
+    }
+
+    public Vector3 getLocalCentreVector() {
+        return this.localCentreVector;
+    }
+
+    public void setLocalCentreVector(Vector3 localCentreVector) {
+        this.localCentreVector = localCentreVector;
+    }
+
+    public float getCurrentTheta() {
+        return this.currentTheta;
+    }
+
+    public void setCurrentTheta(float currentTheta) {
+        this.currentTheta = currentTheta;
+    }
+
+    public float getCosineEllipseRotation() {
+        return this.cosineEllipseRotation;
+    }
+
+    public void setCosineEllipseRotation(float cosineEllipseRotation) {
+        this.cosineEllipseRotation = cosineEllipseRotation;
+    }
+
+    public float getSineEllipseRotation() {
+        return this.sineEllipseRotation;
+    }
+
+    public void setSineEllipseRotation(float sineEllipseRotation) {
+        this.sineEllipseRotation = sineEllipseRotation;
+    }
+
+    public float getDistanceFromFoci() {
+        return this.distanceFromFoci;
+    }
+
+    public void setDistanceFromFoci(float distanceFromFoci) {
+        this.distanceFromFoci = distanceFromFoci;
     }
 }
