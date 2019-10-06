@@ -97,7 +97,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 3.4
+  m_Radius: 22.7
 --- !u!114 &7612232615157878005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,13 +110,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 830853366e696fd4397375c15cc06c86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 3.4
-  mass: 597
-  radiusModifier: 1
+  radius: 22.7
+  mass: 597000
   minFociRadius: 1
-  maxFociRadius: 200
-  minPlanetSeparation: 10
-  fociSeparationRange: 100
-  planetVelocity: 0.1
+  maxFociRadius: 450
+  minBodySeparation: 30
+  fociBodySeparationRange: 100
   testObject: {fileID: 0}
-  testObject2: {fileID: 0}

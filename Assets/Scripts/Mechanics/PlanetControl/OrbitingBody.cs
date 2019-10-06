@@ -7,8 +7,11 @@ public class OrbitingBody : CelestialBody {
     [Header("Orbit Details")]
     public float minFociRadius;
     public float maxFociRadius;
-    public float minPlanetSeparation;
-    public float fociSeparationRange;
+    //minBodySeparation - This value plus the sum of the radii of this body and the orbiting body is the minimum 
+    //distance between the two bodies when at periapsis
+    public float minBodySeparation;
+    //minBodySeparation plus the fociBodySeparationRange is the maximum separation between either foci and this body
+    public float fociBodySeparationRange;
     
     private float semiMinorAxis;
     private float semiMajorAxis;
@@ -16,9 +19,15 @@ public class OrbitingBody : CelestialBody {
     private Vector3 foci1;
     private Vector3 foci2;
     private Vector3 centre;
-    private float ellipseRotation;
     private Vector3 localCentreVector;
     private float currentTheta;
+    private float cosineEllipseRotation;
+    private float sineEllipseRotation;
+    private float distanceFromFoci;
+
+    public float getDistanceFromFoci() {
+        return distanceFromFoci;
+    }
 
     public void setupOrbit() {
 
@@ -32,10 +41,10 @@ public class OrbitingBody : CelestialBody {
 
         //radius of both planetary object added together with the minimum separation between the 2 planetary objects
         float minDistanceFromFoci = ((CircleCollider2D)gameObject.transform.parent.GetComponent(typeof(CircleCollider2D))).radius +
-            ((CircleCollider2D)gameObject.GetComponent(typeof(CircleCollider2D))).radius + minPlanetSeparation;
+            ((CircleCollider2D)gameObject.GetComponent(typeof(CircleCollider2D))).radius + minBodySeparation;
 
         //minimum distance planet centre should be from either foci to ensure no collision with orbiting object
-        float distanceFromFoci = Random.Range(minDistanceFromFoci, minDistanceFromFoci + fociSeparationRange);
+        distanceFromFoci = Random.Range(minDistanceFromFoci, minDistanceFromFoci + fociBodySeparationRange);
 
         //distance between the 2 foci points
         float fociDistance = Mathf.Sqrt(Mathf.Pow(foci2.x - foci1.x, 2.0f) + Mathf.Pow(foci2.y - foci1.y, 2.0f));
@@ -52,7 +61,9 @@ public class OrbitingBody : CelestialBody {
 
         semiMinorAxis = semiMajorAxis * Mathf.Sqrt(1 - Mathf.Pow(eccentricity, 2.0f));
 
-        ellipseRotation = Mathf.Atan((foci2.y - foci1.y) / (foci2.x - foci1.x));
+        float ellipseRotation = Mathf.Atan((foci2.y - foci1.y) / (foci2.x - foci1.x));
+        cosineEllipseRotation = Mathf.Cos(ellipseRotation);
+        sineEllipseRotation = Mathf.Sin(ellipseRotation);
 
         currentTheta = Random.Range(0, 360);
 
@@ -69,8 +80,8 @@ public class OrbitingBody : CelestialBody {
     private Vector3 getPositionInOrbit(float theta) {
         theta = theta * Mathf.Deg2Rad;
         
-        return new Vector3((semiMajorAxis * Mathf.Cos(theta) * Mathf.Cos(ellipseRotation)) - (semiMinorAxis * Mathf.Sin(theta) * Mathf.Sin(ellipseRotation)) - localCentreVector.x,
-            (semiMajorAxis * Mathf.Cos(theta) * Mathf.Sin(ellipseRotation)) + (semiMinorAxis * Mathf.Sin(theta) * Mathf.Cos(ellipseRotation)) - localCentreVector.y,
+        return new Vector3((semiMajorAxis * Mathf.Cos(theta) * cosineEllipseRotation) - (semiMinorAxis * Mathf.Sin(theta) * sineEllipseRotation) - localCentreVector.x,
+            (semiMajorAxis * Mathf.Cos(theta) * sineEllipseRotation) + (semiMinorAxis * Mathf.Sin(theta) * cosineEllipseRotation) - localCentreVector.y,
             0);
     }
 
