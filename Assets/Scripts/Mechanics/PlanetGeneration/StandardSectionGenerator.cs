@@ -18,7 +18,7 @@ public class StandardSectionGenerator : SectionGenerator {
             GameObject tileMapContainer, 
             GameObject sectionPrefab, 
             TileMapGenerator tileMapGenerator,
-            Tile tile) : base(width, height, tileMapContainer, sectionPrefab, tileMapGenerator, tile) {
+            List<Tile> tiles) : base(width, height, tileMapContainer, sectionPrefab, tileMapGenerator, tiles) {
         
         this.initialX = (int)(this.width * 0.5f);
         this.initialY = (int)(this.height * 0.5f);
@@ -33,16 +33,22 @@ public class StandardSectionGenerator : SectionGenerator {
         GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3(xPos, 0, 0), Quaternion.identity, this.tileMapContainer.transform);
         //get the tile map component to add tiles to
         Tilemap section = (Tilemap)instantiatedSection.GetComponent(typeof(Tilemap));
-
+        bool first = true;
         for(int x = 0; x < this.width; x++) {
             for(int y = 0; y < this.height; y++) {
                 if(tileMapping[x,y] == 1) {
                     //set up new vector position for the current tile
                     Vector3Int pos = new Vector3Int(x - this.initialX, this.initialY - y - 1, 0);
                     //add tile in position
-                    section.SetTile(pos, this.tile);
+                    int r = Random.Range(1, tiles.Count);
+                    if (first)
+                        section.SetTile(pos, this.tiles[0]);
+                    else                        
+                        section.SetTile(pos, this.tiles[r]);
+                    first = false;
                 }
             }
+            first = true;
         }
 
         return instantiatedSection;

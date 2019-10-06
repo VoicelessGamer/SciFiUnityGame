@@ -41,14 +41,13 @@ public class PlanetManager : MonoBehaviour
         //(figure out how to determine what kind later)
 
         
-        foreach (TileMapGenerator tileMapGenerator in tileMapGenerators){
-            int r = Random.Range(0, tile.Count);
+        foreach (TileMapGenerator tileMapGenerator in tileMapGenerators){            
             this.sectionGen.Add(new StandardSectionGenerator(sectionWidth,
             sectionHeight,
             tileMapContainer,
             sectionPrefab,
             tileMapGenerator,
-            tile[r]));
+            tileMapGenerator.tiles));
         }
 
         //eventually array will be generated from a starting section and surrounding positions

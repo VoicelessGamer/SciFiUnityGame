@@ -17,7 +17,7 @@ namespace Mechanics.TileMapGen {
         public int placementChance;
         
         public WeightedInteger[] weightedValues;
-
+        
         public override int[,] generateMap(int width, int height) {
 
             int[,] tileMapping = new int[width, height];

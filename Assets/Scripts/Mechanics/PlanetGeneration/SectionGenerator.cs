@@ -14,21 +14,21 @@ public abstract class SectionGenerator: MonoBehaviour {
     protected GameObject sectionPrefab;
     protected TileMapGenerator tileMapGenerator;
     protected int totalSections;
-    protected Tile tile;
+    protected List<Tile> tiles;
 
     public SectionGenerator(int width, 
             int height, 
             GameObject tileMapContainer, 
             GameObject sectionPrefab, 
             TileMapGenerator tileMapGenerator,
-            Tile tile) {
+            List<Tile> tiles) {
 
         this.width = width;
         this.height = height;
         this.tileMapContainer = tileMapContainer;
         this.sectionPrefab = sectionPrefab;
         this.tileMapGenerator = tileMapGenerator;
-        this.tile = tile;
+        this.tiles = tiles;
     }
 
     public abstract int[,] generateSection();
