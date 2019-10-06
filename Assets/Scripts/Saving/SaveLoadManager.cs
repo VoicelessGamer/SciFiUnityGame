@@ -7,6 +7,64 @@ using System.IO;
 
 public static class SaveLoadManager {
 
+    public static void saveStarSystem(OrbitalDetails orbitalDetails) {
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream stream = new FileStream(Application.persistentDataPath + "/orbitalDetails.sav", FileMode.Create);
+
+        SerializableOrbitDetails serializableOrbitDetails = new SerializableOrbitDetails(orbitalDetails);
+
+        bf.Serialize(stream, serializableOrbitDetails);
+        stream.Close();
+    }
+
+    public static OrbitalDetails loadStarSystem() {
+        if(File.Exists(Application.persistentDataPath + "/orbitalDetails.sav")) {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream stream = new FileStream(Application.persistentDataPath + "/orbitalDetails.sav", FileMode.Open);
+
+            SerializableOrbitDetails serializableOrbitDetails = (SerializableOrbitDetails)bf.Deserialize(stream);
+
+            OrbitalDetails orbitalDetails = deserializeOrbitDetails(serializableOrbitDetails);
+
+            stream.Close();
+
+            return orbitalDetails;
+        }
+
+        return null;
+    }
+
+    public static OrbitalDetails deserializeOrbitDetails(SerializableOrbitDetails serializableOrbitDetails) {
+        List<OrbitalDetails> orbitingBodies = new List<OrbitalDetails>();
+
+        if(serializableOrbitDetails.orbitingBodies.Count > 0) {
+            for(int i = 0; i < serializableOrbitDetails.orbitingBodies.Count; i++) {
+                orbitingBodies.Add(deserializeOrbitDetails(serializableOrbitDetails.orbitingBodies[i]));
+            }
+        }
+
+        if(serializableOrbitDetails.foci1 != null) {
+            return new OrbitalDetails(serializableOrbitDetails.radius,
+                serializableOrbitDetails.mass,
+                serializableOrbitDetails.semiMinorAxis,
+                serializableOrbitDetails.semiMajorAxis,
+                serializableOrbitDetails.eccentricity,
+                new Vector3(serializableOrbitDetails.foci1[0], serializableOrbitDetails.foci1[1], serializableOrbitDetails.foci1[2]),
+                new Vector3(serializableOrbitDetails.foci2[0], serializableOrbitDetails.foci2[1], serializableOrbitDetails.foci2[2]),
+                new Vector3(serializableOrbitDetails.centre[0], serializableOrbitDetails.centre[1], serializableOrbitDetails.centre[2]),
+                new Vector3(serializableOrbitDetails.localCentreVector[0], serializableOrbitDetails.localCentreVector[1], serializableOrbitDetails.localCentreVector[2]),
+                serializableOrbitDetails.currentTheta,
+                serializableOrbitDetails.cosineEllipseRotation,
+                serializableOrbitDetails.sineEllipseRotation,
+                serializableOrbitDetails.distanceFromFoci,
+                orbitingBodies);
+        } else {
+            return new OrbitalDetails(serializableOrbitDetails.radius,
+                serializableOrbitDetails.mass,
+                orbitingBodies);
+        }
+    }
+
     public static void saveTileMappings(Dictionary<int, int[,]> tileMapping) {
         BinaryFormatter bf = new BinaryFormatter();
         FileStream stream = new FileStream(Application.persistentDataPath + "/tileMappings.sav", FileMode.Create);
@@ -29,6 +87,46 @@ public static class SaveLoadManager {
         }
 
         return new Dictionary<int, int[,]>();
+    }
+}
+
+[Serializable]
+public class SerializableOrbitDetails {
+    public float radius;
+    public float mass;
+    public float semiMinorAxis;
+    public float semiMajorAxis;
+    public float eccentricity;
+    public float[] foci1;
+    public float[] foci2;
+    public float[] centre;
+    public float[] localCentreVector;
+    public float currentTheta;
+    public float cosineEllipseRotation;
+    public float sineEllipseRotation;
+    public float distanceFromFoci;
+    public List<SerializableOrbitDetails> orbitingBodies;
+
+    public SerializableOrbitDetails(OrbitalDetails orbitalDetails) {
+        this.radius = orbitalDetails.getRadius();
+        this.mass = orbitalDetails.getMass();
+        this.semiMinorAxis = orbitalDetails.getSemiMinorAxis();
+        this.semiMajorAxis = orbitalDetails.getSemiMajorAxis();
+        this.eccentricity = orbitalDetails.getEccentricity();
+        this.foci1 = orbitalDetails.getFoci1();
+        this.foci2 = orbitalDetails.getFoci2();
+        this.centre = orbitalDetails.getCentre();
+        this.localCentreVector = orbitalDetails.getLocalCentreVector();
+        this.currentTheta = orbitalDetails.getCurrentTheta();
+        this.cosineEllipseRotation = orbitalDetails.getCosineEllipseRotation();
+        this.sineEllipseRotation = orbitalDetails.getSineEllipseRotation();
+        this.distanceFromFoci = orbitalDetails.getDistanceFromFoci();
+
+        List<SerializableOrbitDetails> children = new List<SerializableOrbitDetails>();
+        foreach(OrbitalDetails currentOrbitalDetails in orbitalDetails.getOrbitingBodies()) {
+            children.Add(new SerializableOrbitDetails(currentOrbitalDetails));
+        }
+        this.orbitingBodies = children;
     }
 }
 
