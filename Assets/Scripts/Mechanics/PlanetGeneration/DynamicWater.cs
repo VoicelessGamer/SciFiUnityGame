@@ -112,7 +112,7 @@ public class DynamicWater : MonoBehaviour
     {
         // optimization. we don't want to calculate all of this on every update.
         //if (timer <= 0) return;
-        //timer -= Time.deltaTime;
+        //    timer -= Time.deltaTime;
 
         // updating physics
         for (int i = 0; i < quality; i++)
