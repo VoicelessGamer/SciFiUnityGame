@@ -5,7 +5,9 @@ using UnityEngine.Tilemaps;
 using UnityEditor;
 
 namespace Mechanics.TileMapGen {
-    public abstract class TileMapGenerator : MonoBehaviour {
+    public abstract class TileMapGenerator {
         public abstract int[,] generateMap(int width, int height);
+        
+        public abstract int[,] generateMap(int width, int height, int[,] leftSideMapping, int[,] rightSideMapping);
     }
 }

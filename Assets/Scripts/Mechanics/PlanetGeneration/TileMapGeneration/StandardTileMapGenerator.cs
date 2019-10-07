@@ -7,16 +7,32 @@ namespace Mechanics.TileMapGen {
         Generates a map from bottom left to top right. First row is generated using just the placement chance.
         Each placed tile must be connected to a previously placed tile.
      */
-    public class StandardTileMapGenerator : TileMapGenerator
-    {
+    [System.Serializable]
+    public class StandardTileMapGenerator : TileMapGenerator {
 
         //placement chance for each position on the bottom row
         [Range(0,100)]
-        public int placementChance;
+        private int placementChance;
         //true if the tile space below must be occupied
-        public bool requireConnection;
+        private bool requireConnection;
         //scaling vlaue for the placement chance per row
-        public float placementScaling;
+        private float placementScaling;
+
+        public StandardTileMapGenerator() {
+            this.placementChance = 100;
+            this.requireConnection = true;
+            this.placementScaling = 0.1f;
+        }
+
+        public StandardTileMapGenerator(int placementChance, bool requireConnection, float placementScaling) {
+            this.placementChance = placementChance;
+            this.requireConnection = requireConnection;
+            this.placementScaling = placementScaling;
+        }
+
+        public static StandardTileMapGenerator CreateFromJSON(string jsonString) {
+            return JsonUtility.FromJson<StandardTileMapGenerator>(jsonString);
+        }
 
         public override int[,] generateMap(int width, int height) {
 
@@ -35,6 +51,9 @@ namespace Mechanics.TileMapGen {
             }
 
             return tileMapping;
+        }
+        public override int[,] generateMap(int width, int height, int[,] leftSideMapping, int[,] rightSideMapping) {
+            return generateMap(width, height);
         }
 
         public float getScaledPlacementChance(int y, int height) {
