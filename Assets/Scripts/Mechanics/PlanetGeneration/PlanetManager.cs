@@ -38,9 +38,15 @@ public class PlanetManager : MonoBehaviour
 
         this.sections = new List<Section>();
 
+        TextAsset textFile = Resources.Load<TextAsset>("tileManagerConfig");
+
+        ConfigurationLoader.SimpleMapConfigurations smc = ConfigurationLoader.createSimpleMapConfigFromJSON(textFile.text);
+
+        Debug.Log(smc);
+
         //create a new planet generator
         //(figure out how to determine what kind later)
-        this.sectionGen = new StandardSectionGenerator(sectionWidth,
+        /*this.sectionGen = new StandardSectionGenerator(sectionWidth,
             sectionHeight,
             tileMapContainer,
             sectionPrefab,
@@ -50,7 +56,7 @@ public class PlanetManager : MonoBehaviour
         //eventually array will be generated from a starting section and surrounding positions
         generateSectionsInView(0);
 
-        SaveLoadManager.saveTileMappings(this.planetTileMappings);
+        SaveLoadManager.saveTileMappings(this.planetTileMappings);*/
     }
 
     public void generateSectionsInView(int centredSection) {
@@ -158,10 +164,10 @@ public class PlanetManager : MonoBehaviour
 
     void Update() {
         //builds and delete sections when the player crosses a boundary
-        if(playerTransform.position.x < xBoundaries[0]) {
+        /*if(playerTransform.position.x < xBoundaries[0]) {
             shiftView(0);
         } else if(playerTransform.position.x > xBoundaries[1]) {
             shiftView(1);
-        }
+        }*/
     }
 }

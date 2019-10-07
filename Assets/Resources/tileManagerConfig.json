@@ -1,0 +1,108 @@
+{
+	"configurations": [
+		{
+			"id": "simpleHills",
+			"config": {
+				"placementChance": 69,
+				"weightedValues": [
+					{
+						"value": 0,
+						"weighting": 0
+					},
+					{
+						"value": 1,
+						"weighting": 0
+					},
+					{
+						"value": 2,
+						"weighting": 0
+					},
+					{
+						"value": 3,
+						"weighting": 0
+					},
+					{
+						"value": 4,
+						"weighting": 0
+					},
+					{
+						"value": 5,
+						"weighting": 0
+					},
+					{
+						"value": 6,
+						"weighting": 0
+					},
+					{
+						"value": 7,
+						"weighting": 0
+					},
+					{
+						"value": 8,
+						"weighting": 0
+					},
+					{
+						"value": 9,
+						"weighting": 0
+					},
+					{
+						"value": 10,
+						"weighting": 0
+					},
+					{
+						"value": 11,
+						"weighting": 0
+					},
+					{
+						"value": 12,
+						"weighting": 50
+					},
+					{
+						"value": 13,
+						"weighting": 50
+					},
+					{
+						"value": 14,
+						"weighting": 50
+					},
+					{
+						"value": 15,
+						"weighting": 50
+					},
+					{
+						"value": 16,
+						"weighting": 50
+					},
+					{
+						"value": 17,
+						"weighting": 50
+					},
+					{
+						"value": 18,
+						"weighting": 50
+					},
+					{
+						"value": 19,
+						"weighting": 0
+					},
+					{
+						"value": 20,
+						"weighting": 0
+					},
+					{
+						"value": 21,
+						"weighting": 0
+					},
+					{
+						"value": 22,
+						"weighting": 0
+					},
+					{
+						"value": 23,
+						"weighting": 0
+					}
+				]
+			}
+		}
+	]
+}
