@@ -27,10 +27,6 @@ namespace Mechanics.TileMapGen {
             this.weightedValues = weightedValues;
         }
 
-        public static SimpleTileMapGenerator CreateFromJSON(string jsonString) {
-            return JsonUtility.FromJson<SimpleTileMapGenerator>(jsonString);
-        }
-
         public override int[,] generateMap(int width, int height) {
 
             int[,] tileMapping = new int[width, height];

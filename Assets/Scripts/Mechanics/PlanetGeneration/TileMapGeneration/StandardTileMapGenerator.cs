@@ -32,10 +32,6 @@ namespace Mechanics.TileMapGen {
             this.placementScaling = placementScaling;
         }
 
-        public static StandardTileMapGenerator CreateFromJSON(string jsonString) {
-            return JsonUtility.FromJson<StandardTileMapGenerator>(jsonString);
-        }
-
         public override int[,] generateMap(int width, int height) {
 
             int[,] tileMapping = new int[width, height];

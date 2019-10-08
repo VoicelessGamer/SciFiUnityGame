@@ -12,10 +12,10 @@ public class PlanetManager : MonoBehaviour
     //building details
     public int sectionWidth;
     public int sectionHeight;
+    public int sectionsInView;
     public GameObject tileMapContainer;
     public GameObject sectionPrefab;
     public TileMapGenerator tileMapGenerator;
-    public int sectionsInView;
 
     //planet details
     [Range(5, 100)]
@@ -32,36 +32,40 @@ public class PlanetManager : MonoBehaviour
     private List<Section> sections;
     private float[] xBoundaries = new float[2];
 
+    private List<TileMapGenerator> tileMapGenerators;
+
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
+        //setup map configurations
+        this.tileMapGenerators = new List<TileMapGenerator>();
+        setupMapConfigurations(new List<string>(){"simpleHills"});
+
         this.planetTileMappings = SaveLoadManager.loadTileMappings();
 
         this.sections = new List<Section>();
 
-        /*SimpleTileMapGenerator simpleTileMapGenerator = new SimpleTileMapGenerator(40, new WeightedInteger[0]);
-
-        string json = JsonUtility.ToJson(simpleTileMapGenerator);*/
-
-        TextAsset textFile = Resources.Load<TextAsset>("tileManagerConfig");
-
-        ConfigurationLoader.SimpleMapConfigurations smc = ConfigurationLoader.createSimpleMapConfigFromJSON(textFile.text);
-
-        Debug.Log(smc);
-
         //create a new planet generator
         //(figure out how to determine what kind later)
-        /*this.sectionGen = new StandardSectionGenerator(sectionWidth,
+        this.sectionGen = new StandardSectionGenerator(sectionWidth,
             sectionHeight,
             tileMapContainer,
             sectionPrefab,
-            tileMapGenerator,
+            tileMapGenerators[(int)Random.Range(0, tileMapGenerators.Count)],
             tile);
 
         //eventually array will be generated from a starting section and surrounding positions
         generateSectionsInView(0);
 
-        SaveLoadManager.saveTileMappings(this.planetTileMappings);*/
+        SaveLoadManager.saveTileMappings(this.planetTileMappings);
+    }
+
+    void Update() {
+        //builds and delete sections when the player crosses a boundary
+        /*if(playerTransform.position.x < xBoundaries[0]) {
+            shiftView(0);
+        } else if(playerTransform.position.x > xBoundaries[1]) {
+            shiftView(1);
+        }*/
     }
 
     public void generateSectionsInView(int centredSection) {
@@ -167,12 +171,15 @@ public class PlanetManager : MonoBehaviour
         }
     }
 
-    void Update() {
-        //builds and delete sections when the player crosses a boundary
-        /*if(playerTransform.position.x < xBoundaries[0]) {
-            shiftView(0);
-        } else if(playerTransform.position.x > xBoundaries[1]) {
-            shiftView(1);
-        }*/
+    private void setupMapConfigurations(List<string> groupIds) {
+        TextAsset textFile = Resources.Load<TextAsset>("configurations/simpleTileMapConfigurations");
+
+        ConfigurationLoader.SimpleMapConfiguration configuration = ConfigurationLoader.createSimpleMapConfigFromJSON(textFile.text);
+
+        foreach(ConfigurationLoader.SimpleMapConfiguration.SimpleMapEntry mapGroup in configuration.configurations) {
+            if(groupIds.Contains(mapGroup.groupId)) {
+                this.tileMapGenerators.AddRange(mapGroup.configurations);
+            }
+        }
     }
 }

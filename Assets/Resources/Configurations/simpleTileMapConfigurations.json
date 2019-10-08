@@ -1,0 +1,42 @@
+{
+	"configurations": [
+		{
+			"groupId": "simpleHills",
+			"configurations": [
+				{
+					"placementChance": 69,
+					"weightedValues": [
+						{
+							"value": 12,
+							"weighting": 50
+						},
+						{
+							"value": 13,
+							"weighting": 50
+						},
+						{
+							"value": 14,
+							"weighting": 50
+						},
+						{
+							"value": 15,
+							"weighting": 50
+						},
+						{
+							"value": 16,
+							"weighting": 50
+						},
+						{
+							"value": 17,
+							"weighting": 50
+						},
+						{
+							"value": 18,
+							"weighting": 50
+						}
+					]
+				}
+			]
+		}
+	]
+}

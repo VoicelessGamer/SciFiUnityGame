@@ -6,18 +6,34 @@ using Mechanics.TileMapGen;
 public class ConfigurationLoader {
     
     [System.Serializable]
-    public struct SimpleMapConfigurations {
+    public struct SimpleMapConfiguration {
 
         [System.Serializable]
         public struct SimpleMapEntry {
-            public string id;
-            public SimpleTileMapGenerator config;
+            public string groupId;
+            public SimpleTileMapGenerator[] configurations;
         }
 
         public SimpleMapEntry[] configurations;
     }
+    
+    [System.Serializable]
+    public struct StandardMapConfigurations {
 
-    public static SimpleMapConfigurations createSimpleMapConfigFromJSON(string jsonString) {
-        return JsonUtility.FromJson<SimpleMapConfigurations>(jsonString);
+        [System.Serializable]
+        public struct StandardMapEntry {
+            public string groupId;
+            public StandardTileMapGenerator[] configurations;
+        }
+        
+        public StandardMapEntry[] configurations;
+    }
+
+    public static SimpleMapConfiguration createSimpleMapConfigFromJSON(string jsonString) {
+        return JsonUtility.FromJson<SimpleMapConfiguration>(jsonString);
+    }
+
+    public static StandardMapConfigurations createStandardMapConfigFromJSON(string jsonString) {
+        return JsonUtility.FromJson<StandardMapConfigurations>(jsonString);
     }
 }
