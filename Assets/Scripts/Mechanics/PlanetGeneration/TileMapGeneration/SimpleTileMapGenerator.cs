@@ -12,9 +12,9 @@ namespace Mechanics.TileMapGen {
     public class SimpleTileMapGenerator : TileMapGenerator {
 
         //placement chance for each position on the bottom row
-        [Range(0,100)]
+        [SerializeField]
         private int placementChance;
-        
+        [SerializeField]
         private WeightedInteger[] weightedValues;
 
         public SimpleTileMapGenerator() {

@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine.Tilemaps;
 using Mechanics.TileMapGen;
 using System.IO;
+using Core;
 
 public class PlanetManager : MonoBehaviour
 {
@@ -37,6 +38,10 @@ public class PlanetManager : MonoBehaviour
         this.planetTileMappings = SaveLoadManager.loadTileMappings();
 
         this.sections = new List<Section>();
+
+        /*SimpleTileMapGenerator simpleTileMapGenerator = new SimpleTileMapGenerator(40, new WeightedInteger[0]);
+
+        string json = JsonUtility.ToJson(simpleTileMapGenerator);*/
 
         TextAsset textFile = Resources.Load<TextAsset>("tileManagerConfig");
 

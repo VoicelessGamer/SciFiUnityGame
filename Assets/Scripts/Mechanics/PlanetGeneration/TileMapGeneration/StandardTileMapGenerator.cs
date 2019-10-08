@@ -11,11 +11,13 @@ namespace Mechanics.TileMapGen {
     public class StandardTileMapGenerator : TileMapGenerator {
 
         //placement chance for each position on the bottom row
-        [Range(0,100)]
+        [SerializeField]
         private int placementChance;
         //true if the tile space below must be occupied
+        [SerializeField]
         private bool requireConnection;
         //scaling vlaue for the placement chance per row
+        [SerializeField]
         private float placementScaling;
 
         public StandardTileMapGenerator() {
