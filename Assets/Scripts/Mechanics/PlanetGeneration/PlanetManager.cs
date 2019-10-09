@@ -38,7 +38,7 @@ public class PlanetManager : MonoBehaviour
     void Start() {
         //setup map configurations
         this.tileMapGenerators = new List<TileMapGenerator>();
-        setupMapConfigurations(new List<string>(){"simpleHills"});
+        setupMapConfigurations(new List<string>(){"simpleTest"});
 
         this.planetTileMappings = SaveLoadManager.loadTileMappings();
 
@@ -61,11 +61,11 @@ public class PlanetManager : MonoBehaviour
 
     void Update() {
         //builds and delete sections when the player crosses a boundary
-        /*if(playerTransform.position.x < xBoundaries[0]) {
+        if(playerTransform.position.x < xBoundaries[0]) {
             shiftView(0);
         } else if(playerTransform.position.x > xBoundaries[1]) {
             shiftView(1);
-        }*/
+        }
     }
 
     public void generateSectionsInView(int centredSection) {
@@ -172,14 +172,10 @@ public class PlanetManager : MonoBehaviour
     }
 
     private void setupMapConfigurations(List<string> groupIds) {
-        TextAsset textFile = Resources.Load<TextAsset>("configurations/simpleTileMapConfigurations");
+        TextAsset textFile = Resources.Load<TextAsset>("configurations/tileMapConfigurations");
 
-        ConfigurationLoader.SimpleMapConfiguration configuration = ConfigurationLoader.createSimpleMapConfigFromJSON(textFile.text);
+        ConfigurationLoader.MapConfiguration configuration = ConfigurationLoader.createMapConfigFromJSON(textFile.text);
 
-        foreach(ConfigurationLoader.SimpleMapConfiguration.SimpleMapEntry mapGroup in configuration.configurations) {
-            if(groupIds.Contains(mapGroup.groupId)) {
-                this.tileMapGenerators.AddRange(mapGroup.configurations);
-            }
-        }
+        this.tileMapGenerators = ConfigurationLoader.getTileMapGenerators(configuration, groupIds);
     }
 }
