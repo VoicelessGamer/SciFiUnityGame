@@ -9,14 +9,23 @@ namespace Mechanics.TileMapGen {
         row (including selected row) are including in the generated map
      */
     [System.Serializable]
-    public class SimpleTileMapGenerator : TileMapGenerator
-    {
+    public class SimpleTileMapGenerator : TileMapGenerator {
 
         //placement chance for each position on the bottom row
-        [Range(0,100)]
-        public int placementChance;
-        
-        public WeightedInteger[] weightedValues;
+        [SerializeField]
+        private int placementChance;
+        [SerializeField]
+        private WeightedInteger[] weightedValues;
+
+        public SimpleTileMapGenerator() {
+            this.placementChance = 100;
+            this.weightedValues = new WeightedInteger[0];
+        }
+
+        public SimpleTileMapGenerator(int placementChance, WeightedInteger[] weightedValues) {
+            this.placementChance = placementChance;
+            this.weightedValues = weightedValues;
+        }
 
         public override int[,] generateMap(int width, int height) {
 
@@ -35,6 +44,10 @@ namespace Mechanics.TileMapGen {
             }
 
             return tileMapping;
+        }
+
+        public override int[,] generateMap(int width, int height, int[,] leftSideMapping, int[,] rightSideMapping) {
+            return generateMap(width, height);
         }
     }
 }

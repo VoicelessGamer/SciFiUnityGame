@@ -1,0 +1,49 @@
+{
+	"configurations": [
+		{
+			"groupId": "simpleTest",
+			"simpleConfigurations": [
+				{
+					"placementChance": 100,
+					"weightedValues": [
+						{
+							"value": 12,
+							"weighting": 50
+						},
+						{
+							"value": 13,
+							"weighting": 50
+						},
+						{
+							"value": 14,
+							"weighting": 50
+						},
+						{
+							"value": 15,
+							"weighting": 50
+						},
+						{
+							"value": 16,
+							"weighting": 50
+						},
+						{
+							"value": 17,
+							"weighting": 50
+						},
+						{
+							"value": 18,
+							"weighting": 50
+						}
+					]
+				}
+			],
+			"standardConfigurations": [
+				{
+					"placementChance": 69,
+					"requireConnection": true,
+					"placementScaling": 0.1
+				}
+			]
+		}
+	]
+}
