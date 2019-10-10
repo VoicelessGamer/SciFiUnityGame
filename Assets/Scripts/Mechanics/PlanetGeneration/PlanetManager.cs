@@ -33,8 +33,8 @@ public class PlanetManager : MonoBehaviour
     //other details
     private List<Section> sections;
     private List<TileMapGenerator> tileMapGenerators;
-    private StandardSectionBuilder standardSectionBuilder;
-    private TopLayerAlteration tileMapAlteration;
+    private SectionBuilder sectionBuilder;
+    private TileMapAlteration tileMapAlteration;
 
     // Start is called before the first frame update
     void Start() {
@@ -46,9 +46,9 @@ public class PlanetManager : MonoBehaviour
 
         this.sections = new List<Section>();
 
-        standardSectionBuilder = new StandardSectionBuilder();
+        sectionBuilder = SectionBuilderFactory.getSectionBuilder("STANDARD");
 
-        tileMapAlteration = new TopLayerAlteration();
+        tileMapAlteration = TileMapAlterationFactory.getSectionBuilder("TOP_LAYER");
 
         this.planetTileMappings = SaveLoadManager.loadTileMappings();
 
@@ -91,7 +91,7 @@ public class PlanetManager : MonoBehaviour
             //building section
             //Generate in instantiated clone of the section prefab
             GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3(initialX + (this.sectionWidth * i), 0, 0), Quaternion.identity, this.tileMapContainer.transform);
-            standardSectionBuilder.buildSection(tileMapping, instantiatedSection, tiles);
+            sectionBuilder.buildSection(tileMapping, instantiatedSection, tiles);
             instantiatedSection.name = "Section-" + index;
 
             //set the boundaries, for the player to cross to load next and delete furthest sections, to the edges of the centred section
@@ -132,7 +132,7 @@ public class PlanetManager : MonoBehaviour
 
             //building section
             GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3((int)(go.transform.position.x - this.sectionWidth), 0, 0), Quaternion.identity, this.tileMapContainer.transform);
-            standardSectionBuilder.buildSection(tileMapping, instantiatedSection, tiles);
+            sectionBuilder.buildSection(tileMapping, instantiatedSection, tiles);
             instantiatedSection.name = "Section-" + index;
             
             //destroy right section
@@ -160,7 +160,7 @@ public class PlanetManager : MonoBehaviour
 
             //building section
             GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3((int)(go.transform.position.x + this.sectionWidth), 0, 0), Quaternion.identity, this.tileMapContainer.transform);
-            standardSectionBuilder.buildSection(tileMapping, instantiatedSection, tiles);
+            sectionBuilder.buildSection(tileMapping, instantiatedSection, tiles);
             instantiatedSection.name = "Section-" + index;
             
             //destroy left section
@@ -176,7 +176,7 @@ public class PlanetManager : MonoBehaviour
         int leftIndex = index != 0 ? index - 1 : this.totalSections - 1;
         int rightIndex = index != this.totalSections - 1 ? index + 1 : 0;
 
-        int[,] tileMapping = standardSectionBuilder.generateSection(this.sectionWidth, 
+        int[,] tileMapping = sectionBuilder.generateSection(this.sectionWidth, 
             this.sectionHeight, 
             tileMapGenerators[(int)Random.Range(0, tileMapGenerators.Count)],
             this.planetTileMappings.ContainsKey(leftIndex) ? this.planetTileMappings[leftIndex] : null,
