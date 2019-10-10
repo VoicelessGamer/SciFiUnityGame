@@ -253,7 +253,8 @@ MonoBehaviour:
   sectionPrefab: {fileID: 588455639404111599, guid: 2d6b66641267ccb47bb017a01919f1b8,
     type: 3}
   totalSections: 5
-  tile: {fileID: 11400000, guid: 0ce0fccee4b9ca14ba05442ecde57a2c, type: 2}
+  dirtTile: {fileID: 11400000, guid: 0ce0fccee4b9ca14ba05442ecde57a2c, type: 2}
+  grassTile: {fileID: 11400000, guid: 94d268aadf9a6194290b307609d379a3, type: 2}
   playerTransform: {fileID: 965059814}
 --- !u!4 &759897427
 Transform:

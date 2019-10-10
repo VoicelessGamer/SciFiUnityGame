@@ -10,6 +10,9 @@ public class StandardSectionBuilder : SectionBuilder {
     public override int[,] generateSection(int width, int height, TileMapGenerator tileMapGenerator) {
         return tileMapGenerator.generateMap(width, height);
     }
+    public override int[,] generateSection(int width, int height, TileMapGenerator tileMapGenerator, int[,] leftSideMapping, int[,] rightSideMapping) {
+        return tileMapGenerator.generateMap(width, height, leftSideMapping, rightSideMapping);
+    }
 
     public override void buildSection(int[,] tileMapping, GameObject instantiatedSection, Dictionary<int, Tile> tiles) {
 
