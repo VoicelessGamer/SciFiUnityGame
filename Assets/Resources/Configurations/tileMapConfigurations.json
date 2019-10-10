@@ -44,6 +44,14 @@
 					"placementScaling": 0.1
 				}
 			]
+		},		
+		{
+			"groupId": "simpleTest2",
+			"relativePathConfigurations": [
+				{
+					"variation": 1
+				}
+			]
 		}
 	]
 }
