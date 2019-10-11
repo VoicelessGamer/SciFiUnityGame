@@ -13,6 +13,7 @@ public class ConfigurationLoader {
             public string groupId;
             public SimpleTileMapGenerator[] simpleConfigurations;
             public StandardTileMapGenerator[] standardConfigurations;
+            public RelativePathTileMapGenerator[] relativePathConfigurations;
         }
 
         public MapEntry[] configurations;
@@ -29,8 +30,15 @@ public class ConfigurationLoader {
 
         foreach(MapConfiguration.MapEntry mapGroup in mapConfiguration.configurations) {
             if(groupIds.Contains(mapGroup.groupId)) {
-                tileMapGenerators.AddRange(mapGroup.simpleConfigurations);
-                tileMapGenerators.AddRange(mapGroup.standardConfigurations);
+                if(mapGroup.simpleConfigurations != null) {
+                    tileMapGenerators.AddRange(mapGroup.simpleConfigurations);
+                }
+                if(mapGroup.standardConfigurations != null) {
+                    tileMapGenerators.AddRange(mapGroup.standardConfigurations);
+                }
+                if(mapGroup.relativePathConfigurations != null) {
+                    tileMapGenerators.AddRange(mapGroup.relativePathConfigurations);
+                }
             }
         }
 

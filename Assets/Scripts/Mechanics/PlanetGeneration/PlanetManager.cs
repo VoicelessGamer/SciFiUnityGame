@@ -40,7 +40,7 @@ public class PlanetManager : MonoBehaviour
     void Start() {
         //setup map configurations
         this.tileMapGenerators = new List<TileMapGenerator>();
-        setupMapConfigurations(new List<string>(){"simpleTest"});
+        setupMapConfigurations(new List<string>(){"simpleTest2"});
 
         tiles = new Dictionary<int, Tile>(){{1, dirtTile},{2, grassTile}};
 
