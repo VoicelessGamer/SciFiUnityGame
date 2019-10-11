@@ -14,6 +14,7 @@ public class PlanetManager : MonoBehaviour
     public GameObject tileMapContainer;
     public GameObject sectionPrefab;
     public TileMapGenerator[] tileMapGenerators;
+    public GameObject liquid;
     public int sectionsInView;
 
     //planet details
@@ -27,6 +28,7 @@ public class PlanetManager : MonoBehaviour
     public Transform playerTransform;
 
     //temp details
+    private LiquidGenerator liquidGen;
     private List<StandardSectionGenerator> sectionGen;
     private List<Section> sections;
     private float[] xBoundaries = new float[2];
@@ -37,17 +39,20 @@ public class PlanetManager : MonoBehaviour
         this.planetTileMappings = SaveLoadManager.loadTileMappings();
         this.sections = new List<Section>();
         this.sectionGen = new List<StandardSectionGenerator>();
+        this.liquidGen = new LiquidGenerator();
         //create a new planet generator
         //(figure out how to determine what kind later)
 
-        
+
         foreach (TileMapGenerator tileMapGenerator in tileMapGenerators){            
             this.sectionGen.Add(new StandardSectionGenerator(sectionWidth,
             sectionHeight,
             tileMapContainer,
             sectionPrefab,
             tileMapGenerator,
-            tileMapGenerator.tiles));
+            tileMapGenerator.tiles)
+            
+            );
         }
 
         //eventually array will be generated from a starting section and surrounding positions
@@ -68,11 +73,15 @@ public class PlanetManager : MonoBehaviour
             int[,] tileMapping;
             int index = sectionIndices[i];
             int r = Random.Range(0, sectionGen.Count);
+            List<Liquid> liquids = new List<Liquid>();
             //if section not in save data, create new section
             if (!this.planetTileMappings.ContainsKey(index)) {
                 
-                tileMapping = this.sectionGen[r].generateSection();
+                tileMapping = this.sectionGen[r].generateSection();                
+                
                 this.planetTileMappings.Add(index, tileMapping);
+                //generate liquids for section
+                liquids = liquidGen.GeneratorLiquid(tileMapping, sectionWidth, sectionHeight, liquid);
             } else {
                 tileMapping = this.planetTileMappings[index];
             }
@@ -80,6 +89,12 @@ public class PlanetManager : MonoBehaviour
             //building section, sending through the section x position to be placed
             GameObject section = this.sectionGen[r].buildSection(tileMapping, initialX + (this.sectionWidth * i));
             section.name = "Section-" + index;
+
+            for (int l = 0; l < liquids.Count; l++)
+            {
+                 //create liquids to gameObjects
+            }
+            
 
             //set the boundaries, for the player to cross to load next and delete furthest sections, to the edges of the centred section
             if(index == centredSection) {
