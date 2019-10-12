@@ -108,25 +108,25 @@ public class SerializableOrbitDetails {
     public List<SerializableOrbitDetails> orbitingBodies;
 
     public SerializableOrbitDetails(OrbitalDetails orbitalDetails) {
-        this.radius = orbitalDetails.getRadius();
-        this.mass = orbitalDetails.getMass();
-        this.semiMinorAxis = orbitalDetails.getSemiMinorAxis();
-        this.semiMajorAxis = orbitalDetails.getSemiMajorAxis();
-        this.eccentricity = orbitalDetails.getEccentricity();
-        this.foci1 = orbitalDetails.getFoci1();
-        this.foci2 = orbitalDetails.getFoci2();
-        this.centre = orbitalDetails.getCentre();
-        this.localCentreVector = orbitalDetails.getLocalCentreVector();
-        this.currentTheta = orbitalDetails.getCurrentTheta();
-        this.cosineEllipseRotation = orbitalDetails.getCosineEllipseRotation();
-        this.sineEllipseRotation = orbitalDetails.getSineEllipseRotation();
-        this.distanceFromFoci = orbitalDetails.getDistanceFromFoci();
+        radius = orbitalDetails.getRadius();
+        mass = orbitalDetails.getMass();
+        semiMinorAxis = orbitalDetails.getSemiMinorAxis();
+        semiMajorAxis = orbitalDetails.getSemiMajorAxis();
+        eccentricity = orbitalDetails.getEccentricity();
+        foci1 = orbitalDetails.getFoci1();
+        foci2 = orbitalDetails.getFoci2();
+        centre = orbitalDetails.getCentre();
+        localCentreVector = orbitalDetails.getLocalCentreVector();
+        currentTheta = orbitalDetails.getCurrentTheta();
+        cosineEllipseRotation = orbitalDetails.getCosineEllipseRotation();
+        sineEllipseRotation = orbitalDetails.getSineEllipseRotation();
+        distanceFromFoci = orbitalDetails.getDistanceFromFoci();
 
         List<SerializableOrbitDetails> children = new List<SerializableOrbitDetails>();
         foreach(OrbitalDetails currentOrbitalDetails in orbitalDetails.getOrbitingBodies()) {
             children.Add(new SerializableOrbitDetails(currentOrbitalDetails));
         }
-        this.orbitingBodies = children;
+        orbitingBodies = children;
     }
 }
 

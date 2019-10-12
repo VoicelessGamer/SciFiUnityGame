@@ -18,8 +18,8 @@ namespace Mechanics.TileMapGen {
         private WeightedInteger[] weightedValues;
 
         public SimpleTileMapGenerator() {
-            this.placementChance = 100;
-            this.weightedValues = new WeightedInteger[0];
+            placementChance = 100;
+            weightedValues = new WeightedInteger[0];
         }
 
         public SimpleTileMapGenerator(int placementChance, WeightedInteger[] weightedValues) {
@@ -32,7 +32,7 @@ namespace Mechanics.TileMapGen {
             int[,] tileMapping = new int[width, height];
 
             for(int x = 0; x < width; x++) {
-                bool canPlace = Random.Range(0, 100) < this.placementChance ? true : false;
+                bool canPlace = Random.Range(0, 100) < placementChance ? true : false;
                 if(!canPlace) {
                     continue;
                 }

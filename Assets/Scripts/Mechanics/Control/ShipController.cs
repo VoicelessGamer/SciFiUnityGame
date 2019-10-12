@@ -22,8 +22,8 @@ public class ShipController : MonoBehaviour
     {
         if(controlEnabled) {
             //get input
-            float rotation = -(Input.GetAxis("Horizontal") * this.rotationSpeed);
-            float translation = Input.GetAxis("Vertical") * this.movementSpeed;
+            float rotation = -(Input.GetAxis("Horizontal") * rotationSpeed);
+            float translation = Input.GetAxis("Vertical") * movementSpeed;
 
             //Multiply by delta time to do transformations over seconds rather than frames
             rotation *= Time.deltaTime;

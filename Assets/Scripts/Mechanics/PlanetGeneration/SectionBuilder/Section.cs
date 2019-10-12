@@ -12,10 +12,10 @@ public class Section {
     }
 
     public int getSectionId() {
-        return this.sectionId;
+        return sectionId;
     }
 
     public GameObject getGameObject() {
-        return this.gameObject;
+        return gameObject;
     }
 }

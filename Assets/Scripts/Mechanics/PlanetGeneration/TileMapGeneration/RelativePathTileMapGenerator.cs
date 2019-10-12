@@ -27,7 +27,7 @@ namespace Mechanics.TileMapGen {
             int currentY = leftSideMapping != null ? getYPosition(getArrayRow(leftSideMapping, leftSideMapping.GetLength(0) - 1)) : (int)Mathf.Round(Random.Range(0.0f, (float)(height - 1)));
             int targetRight = rightSideMapping != null ? getYPosition(getArrayRow(rightSideMapping, 0)) : (int)Mathf.Round(Random.Range(0.0f, (float)(height - 1)));
 
-            int deviation = targetRight - currentY;
+            int deviation;
 
             for(int i = 0; i < width; i++) {
                 if(fillGround) {

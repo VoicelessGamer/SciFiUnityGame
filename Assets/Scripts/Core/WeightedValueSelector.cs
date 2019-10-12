@@ -7,8 +7,6 @@ namespace Core
     public class WeightedValueSelector
     {
         public static WeightedValue selectValue(WeightedValue[] weightedValues) {
-            //int[] weightBoundaries = new int[weightedValues.Length];
-
             Dictionary<int, WeightedValue> weightBoundaries = new Dictionary<int, WeightedValue>();
 
             int totalWeight = 0;
@@ -25,11 +23,6 @@ namespace Core
             float value = Random.Range(0, totalWeight);
 
             //return the weighted value whose boundary exceeds the randomly generated value
-            /*for(int i = 0; i < weightBoundaries.Length; i++) {
-                if(value <= weightBoundaries[i]) {
-                    return weightedValues[i];
-                }
-            }*/
             foreach(KeyValuePair<int, WeightedValue> entry in weightBoundaries) {
                 // do something with entry.Value or entry.Key
                 if(value <= entry.Key) {
