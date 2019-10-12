@@ -81,7 +81,7 @@ public class PlanetManager : MonoBehaviour
                 
                 this.planetTileMappings.Add(index, tileMapping);
                 //generate liquids for section
-                liquids = liquidGen.GeneratorLiquid(tileMapping, sectionWidth, sectionHeight, liquid);
+                liquids = liquidGen.GeneratorLiquid(tileMapping, sectionWidth, sectionHeight, liquid, i);
             } else {
                 tileMapping = this.planetTileMappings[index];
             }
@@ -92,7 +92,9 @@ public class PlanetManager : MonoBehaviour
 
             for (int l = 0; l < liquids.Count; l++)
             {
-                 //create liquids to gameObjects
+                
+                GameObject liquidGO = (GameObject)Instantiate(liquid, liquids[l].getPosition(), Quaternion.identity);
+                
             }
             
 
