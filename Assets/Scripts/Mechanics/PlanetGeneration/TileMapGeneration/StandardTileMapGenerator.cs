@@ -21,9 +21,9 @@ namespace Mechanics.TileMapGen {
         private float placementScaling;
 
         public StandardTileMapGenerator() {
-            this.placementChance = 100;
-            this.requireConnection = true;
-            this.placementScaling = 0.1f;
+            placementChance = 100;
+            requireConnection = true;
+            placementScaling = 0.1f;
         }
 
         public StandardTileMapGenerator(int placementChance, bool requireConnection, float placementScaling) {
@@ -56,11 +56,11 @@ namespace Mechanics.TileMapGen {
 
         public float getScaledPlacementChance(int y, int height) {
             //placement chance - (percentage of distance of row from top) * placement scaling value
-            return this.placementChance - ((((float)height - (float)y) / height) * this.placementChance) * this.placementScaling;
+            return placementChance - ((((float)height - (float)y) / height) * placementChance) * placementScaling;
         }
 
         public bool canPlaceTile(int x, int y, int width, int height, int[,] tileMapping) {
-            if(!this.requireConnection) {
+            if(!requireConnection) {
                 return true;
             }
 

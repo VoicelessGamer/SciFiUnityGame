@@ -41,7 +41,7 @@ public class OrbitalDetails {
         float sineEllipseRotation,
         float distanceFromFoci,
         List<OrbitalDetails> orbitingBodies) : this(radius, mass, orbitingBodies) {
-        
+
         this.semiMinorAxis = semiMinorAxis;
         this.semiMajorAxis = semiMajorAxis;
         this.eccentricity = eccentricity;
@@ -56,14 +56,14 @@ public class OrbitalDetails {
     }
 
     public float getRadius() {
-        return this.radius;
+        return radius;
     }
 
     public void setRadius(float radius) {
         this.radius = radius;
     }
     public float getMass() {
-        return this.mass;
+        return mass;
     }
 
     public void setMass(float mass) {
@@ -71,7 +71,7 @@ public class OrbitalDetails {
     }
 
     public float getSemiMinorAxis() {
-        return this.semiMinorAxis;
+        return semiMinorAxis;
     }
 
     public void setSemiMinorAxis(float semiMinorAxis) {
@@ -79,7 +79,7 @@ public class OrbitalDetails {
     }
 
     public float getSemiMajorAxis() {
-        return this.semiMajorAxis;
+        return semiMajorAxis;
     }
 
     public void setSemiMajorAxis(float semiMajorAxis) {
@@ -87,7 +87,7 @@ public class OrbitalDetails {
     }
 
     public float getEccentricity() {
-        return this.eccentricity;
+        return eccentricity;
     }
 
     public void setEccentricity(float eccentricity) {
@@ -95,7 +95,7 @@ public class OrbitalDetails {
     }
 
     public float[] getFoci1() {
-        return this.foci1;
+        return foci1;
     }
 
     public void setFoci1(float[] foci1) {
@@ -103,7 +103,7 @@ public class OrbitalDetails {
     }
 
     public float[] getFoci2() {
-        return this.foci2;
+        return foci2;
     }
 
     public void setFoci2(float[] foci2) {
@@ -111,7 +111,7 @@ public class OrbitalDetails {
     }
 
     public float[] getCentre() {
-        return this.centre;
+        return centre;
     }
 
     public void setCentre(float[] centre) {
@@ -119,7 +119,7 @@ public class OrbitalDetails {
     }
 
     public float[] getLocalCentreVector() {
-        return this.localCentreVector;
+        return localCentreVector;
     }
 
     public void setLocalCentreVector(float[] localCentreVector) {
@@ -127,7 +127,7 @@ public class OrbitalDetails {
     }
 
     public float getCurrentTheta() {
-        return this.currentTheta;
+        return currentTheta;
     }
 
     public void setCurrentTheta(float currentTheta) {
@@ -135,7 +135,7 @@ public class OrbitalDetails {
     }
 
     public float getCosineEllipseRotation() {
-        return this.cosineEllipseRotation;
+        return cosineEllipseRotation;
     }
 
     public void setCosineEllipseRotation(float cosineEllipseRotation) {
@@ -143,7 +143,7 @@ public class OrbitalDetails {
     }
 
     public float getSineEllipseRotation() {
-        return this.sineEllipseRotation;
+        return sineEllipseRotation;
     }
 
     public void setSineEllipseRotation(float sineEllipseRotation) {
@@ -151,7 +151,7 @@ public class OrbitalDetails {
     }
 
     public float getDistanceFromFoci() {
-        return this.distanceFromFoci;
+        return distanceFromFoci;
     }
 
     public void setDistanceFromFoci(float distanceFromFoci) {
@@ -159,7 +159,7 @@ public class OrbitalDetails {
     }
     
     public List<OrbitalDetails> getOrbitingBodies() {
-        return this.orbitingBodies;
+        return orbitingBodies;
     }
 
     public void setOrbitingBodies(List<OrbitalDetails> orbitingBodies) {
@@ -167,6 +167,6 @@ public class OrbitalDetails {
     }
 
     public void addOrbitingBody(OrbitalDetails orbitalDetails) {
-        this.orbitingBodies.Add(orbitalDetails);
+        orbitingBodies.Add(orbitalDetails);
     }
 }

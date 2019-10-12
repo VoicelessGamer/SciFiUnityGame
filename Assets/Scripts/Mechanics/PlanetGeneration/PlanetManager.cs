@@ -39,23 +39,23 @@ public class PlanetManager : MonoBehaviour
     // Start is called before the first frame update
     void Start() {
         //setup map configurations
-        this.tileMapGenerators = new List<TileMapGenerator>();
+        tileMapGenerators = new List<TileMapGenerator>();
         setupMapConfigurations(new List<string>(){"simpleTest2"});
 
         tiles = new Dictionary<int, Tile>(){{1, dirtTile},{2, grassTile}};
 
-        this.sections = new List<Section>();
+        sections = new List<Section>();
 
         sectionBuilder = SectionBuilderFactory.getSectionBuilder("STANDARD");
 
         tileMapAlteration = TileMapAlterationFactory.getSectionBuilder("TOP_LAYER");
 
-        this.planetTileMappings = SaveLoadManager.loadTileMappings();
+        planetTileMappings = SaveLoadManager.loadTileMappings();
 
         //eventually array will be generated from a starting section and surrounding positions
         generateSectionsInView(0);
 
-        SaveLoadManager.saveTileMappings(this.planetTileMappings);
+        SaveLoadManager.saveTileMappings(planetTileMappings);
     }
 
     void Update() {
@@ -68,29 +68,29 @@ public class PlanetManager : MonoBehaviour
     }
 
     public void generateSectionsInView(int centredSection) {
-        float halfWidth = (this.sectionWidth / 2);
+        float halfWidth = (sectionWidth / 2);
 
         //Currently set to 3 sections in view
         //Centred section and the map section either side of it will be generated
         int[] sectionIndices = new int[] { 
-            centredSection != 0 ? centredSection - 1 : this.totalSections - 1, 
+            centredSection != 0 ? centredSection - 1 : totalSections - 1, 
             centredSection, 
-            centredSection != this.totalSections - 1 ? centredSection + 1 : 0};
+            centredSection != totalSections - 1 ? centredSection + 1 : 0};
 
-        int initialX = -this.sectionWidth;
+        int initialX = -sectionWidth;
 
         for (int i = 0; i < sectionIndices.Length; i++) {
             int[,] tileMapping;
             int index = sectionIndices[i];
             //if section not in save data, create new section
-            if (!this.planetTileMappings.ContainsKey(index)) {
+            if (!planetTileMappings.ContainsKey(index)) {
                 generateSection(index);
             }
-            tileMapping = this.planetTileMappings[index];
+            tileMapping = planetTileMappings[index];
 
             //building section
             //Generate in instantiated clone of the section prefab
-            GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3(initialX + (this.sectionWidth * i), 0, 0), Quaternion.identity, this.tileMapContainer.transform);
+            GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3(initialX + (sectionWidth * i), 0, 0), Quaternion.identity, tileMapContainer.transform);
             sectionBuilder.buildSection(tileMapping, instantiatedSection, tiles);
             instantiatedSection.name = "Section-" + index;
 
@@ -101,7 +101,7 @@ public class PlanetManager : MonoBehaviour
             }
 
             //store for later use (loading new sections, deleting old)
-            this.sections.Add(new Section(index, instantiatedSection));
+            sections.Add(new Section(index, instantiatedSection));
         }
     }
 
@@ -110,81 +110,81 @@ public class PlanetManager : MonoBehaviour
     Needs work if that value changes
      */
     public void shiftView(int dir) {
-        float halfWidth = (this.sectionWidth / 2);
+        float halfWidth = (sectionWidth / 2);
         int[,] tileMapping;
         
         if(dir == 0) {
             //left
             //update boundaries
-            GameObject go = this.sections[0].getGameObject();
+            GameObject go = sections[0].getGameObject();
             xBoundaries[0] = go.transform.position.x - halfWidth;
             xBoundaries[1] = go.transform.position.x + halfWidth;
             
             //get index of the section to be created (wrapping if needed)
-            int index = this.sections[0].getSectionId() - 1;
-            index = index == -1 ? this.totalSections - 1 : index;
+            int index = sections[0].getSectionId() - 1;
+            index = index == -1 ? totalSections - 1 : index;
 
             //if section not in save data, create new section
-            if (!this.planetTileMappings.ContainsKey(index)) {
+            if (!planetTileMappings.ContainsKey(index)) {
                 generateSection(index);
             }
-            tileMapping = this.planetTileMappings[index];
+            tileMapping = planetTileMappings[index];
 
             //building section
-            GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3((int)(go.transform.position.x - this.sectionWidth), 0, 0), Quaternion.identity, this.tileMapContainer.transform);
+            GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3((int)(go.transform.position.x - sectionWidth), 0, 0), Quaternion.identity, tileMapContainer.transform);
             sectionBuilder.buildSection(tileMapping, instantiatedSection, tiles);
             instantiatedSection.name = "Section-" + index;
             
             //destroy right section
-            Destroy(this.sections[2].getGameObject());
-            this.sections.Remove(this.sections[2]);
+            Destroy(sections[2].getGameObject());
+            sections.Remove(sections[2]);
 
             //insert new section
-            this.sections.Insert(0, new Section(index, instantiatedSection));
+            sections.Insert(0, new Section(index, instantiatedSection));
         } else {
             //right
             //update boundaries
-            GameObject go = this.sections[2].getGameObject();
+            GameObject go = sections[2].getGameObject();
             xBoundaries[0] = go.transform.position.x - halfWidth;
             xBoundaries[1] = go.transform.position.x + halfWidth;
             
             //get index of the section to be created (wrapping if needed)
-            int index = this.sections[2].getSectionId() + 1;
-            index = index == this.totalSections ? 0 : index;
+            int index = sections[2].getSectionId() + 1;
+            index = index == totalSections ? 0 : index;
 
             //if section not in save data, create new section
-            if (!this.planetTileMappings.ContainsKey(index)) {
+            if (!planetTileMappings.ContainsKey(index)) {
                 generateSection(index);
             }
-            tileMapping = this.planetTileMappings[index];
+            tileMapping = planetTileMappings[index];
 
             //building section
-            GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3((int)(go.transform.position.x + this.sectionWidth), 0, 0), Quaternion.identity, this.tileMapContainer.transform);
+            GameObject instantiatedSection = (GameObject)Instantiate(sectionPrefab, new Vector3((int)(go.transform.position.x + sectionWidth), 0, 0), Quaternion.identity, tileMapContainer.transform);
             sectionBuilder.buildSection(tileMapping, instantiatedSection, tiles);
             instantiatedSection.name = "Section-" + index;
             
             //destroy left section
-            Destroy(this.sections[0].getGameObject());
-            this.sections.Remove(this.sections[0]);
+            Destroy(sections[0].getGameObject());
+            sections.Remove(sections[0]);
 
             //insert new section
-            this.sections.Add(new Section(index, instantiatedSection));
+            sections.Add(new Section(index, instantiatedSection));
         }
     }
 
     private void generateSection(int index) {
-        int leftIndex = index != 0 ? index - 1 : this.totalSections - 1;
-        int rightIndex = index != this.totalSections - 1 ? index + 1 : 0;
+        int leftIndex = index != 0 ? index - 1 : totalSections - 1;
+        int rightIndex = index != totalSections - 1 ? index + 1 : 0;
 
-        int[,] tileMapping = sectionBuilder.generateSection(this.sectionWidth, 
-            this.sectionHeight, 
+        int[,] tileMapping = sectionBuilder.generateSection(sectionWidth, 
+            sectionHeight, 
             tileMapGenerators[(int)Random.Range(0, tileMapGenerators.Count)],
-            this.planetTileMappings.ContainsKey(leftIndex) ? this.planetTileMappings[leftIndex] : null,
-            this.planetTileMappings.ContainsKey(rightIndex) ? this.planetTileMappings[rightIndex] : null);
+            planetTileMappings.ContainsKey(leftIndex) ? planetTileMappings[leftIndex] : null,
+            planetTileMappings.ContainsKey(rightIndex) ? planetTileMappings[rightIndex] : null);
 
         tileMapAlteration.alterMap(tileMapping);
 
-        this.planetTileMappings.Add(index, tileMapping);
+        planetTileMappings.Add(index, tileMapping);
     }
 
     private void setupMapConfigurations(List<string> groupIds) {
@@ -192,6 +192,6 @@ public class PlanetManager : MonoBehaviour
 
         ConfigurationLoader.MapConfiguration configuration = ConfigurationLoader.createMapConfigFromJSON(textFile.text);
 
-        this.tileMapGenerators = ConfigurationLoader.getTileMapGenerators(configuration, groupIds);
+        tileMapGenerators = ConfigurationLoader.getTileMapGenerators(configuration, groupIds);
     }
 }

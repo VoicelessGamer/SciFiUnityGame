@@ -16,7 +16,7 @@ public class FloatingCompanion : Companion {
     void FixedUpdate() {
         plDir = playerSpriteRenderer.flipX;
 
-        Vector3 targetPosition = new Vector3(this.playerTransform.position.x + (plDir == true ? 2 : -2), 
+        Vector3 targetPosition = new Vector3(playerTransform.position.x + (plDir == true ? 2 : -2), 
             playerTransform.position.y + 2, playerTransform.position.z);
         //Vector3 targetPosition = new Vector3(playerTransform.position.x, playerTransform.position.y + 2, playerTransform.position.z);
 
