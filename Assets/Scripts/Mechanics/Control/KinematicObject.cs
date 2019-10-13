@@ -112,7 +112,6 @@ namespace Platformer.Mechanics {
                         var projection = Vector2.Dot(velocity, currentNormal);
                         if (projection < 0) {
                             //slower velocity if moving against the normal (up a hill).
-                            //slower velocity if moving against the normal (up a hill).
                             velocity = velocity - projection * currentNormal;
                         }
                     } else {
