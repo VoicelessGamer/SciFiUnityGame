@@ -36,6 +36,8 @@ public abstract class Gun : Weapon {
     protected override void attack() {
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, getInitialRotation());
 
+        bullet.GetComponent<Projectile>().damage = damage;
+
         Rigidbody2D rBody = (Rigidbody2D)bullet.GetComponent(typeof(Rigidbody2D));
 
         rBody.AddForce(bullet.transform.right * bulletSpeed);
