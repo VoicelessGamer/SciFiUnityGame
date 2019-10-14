@@ -1,29 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Platformer.Model;
+﻿using UnityEngine;
 
-namespace Platformer.Mechanics
-{
-    /// <summary>
-    /// This is the main class used to implement control of the player.
-    /// It is a superset of the AnimationController class, but is inlined to allow for any kind of customisation.
-    /// </summary>
-    public class PlayerController : KinematicObject
-    {
+namespace Platformer.Mechanics {
+    // This is the main class used to implement control of the player.
+    // It is a superset of the AnimationController class, but is inlined to allow for any kind of customisation.
+    public class PlayerController : KinematicObject {
 
-        /// <summary>
-        /// Max horizontal speed of the player.
-        /// </summary>
+        // Max horizontal speed of the player.
         public float maxSpeed = 7;
-        /// <summary>
-        /// Initial jump velocity at the start of a jump.
-        /// </summary>
+        // Initial jump velocity at the start of a jump.
         public float jumpTakeOffSpeed = 7;
 
         public JumpState jumpState = JumpState.Grounded;
         private bool stopJump;
-        /*internal new*/
         public Collider2D collider2d;
         public bool controlEnabled = true;
 
@@ -31,59 +19,45 @@ namespace Platformer.Mechanics
         Vector2 move;
         SpriteRenderer spriteRenderer;
         internal Animator animator;
-        //readonly PlatformerModel model = Simulation.GetModel<PlatformerModel>();
 
         public Bounds Bounds => collider2d.bounds;
 
-        void Awake()
-        {
+        void Awake() {
             collider2d = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
         }
 
-        protected override void Update()
-        {
-            if (controlEnabled)
-            {
+        protected override void Update() {
+            if (controlEnabled) {
                 move.x = Input.GetAxis("Horizontal");
                 if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
                     jumpState = JumpState.PrepareToJump;
-                else if (Input.GetButtonUp("Jump"))
-                {
+                else if (Input.GetButtonUp("Jump")) {
                     stopJump = true;
-                    //Schedule<PlayerStopJump>().player = this;
                 }
-            }
-            else
-            {
+            } else {
                 move.x = 0;
             }
             UpdateJumpState();
             base.Update();
         }
 
-        void UpdateJumpState()
-        {
+        void UpdateJumpState() {
             jump = false;
-            switch (jumpState)
-            {
+            switch (jumpState) {
                 case JumpState.PrepareToJump:
                     jumpState = JumpState.Jumping;
                     jump = true;
                     stopJump = false;
                     break;
                 case JumpState.Jumping:
-                    if (!IsGrounded)
-                    {
-                        //Schedule<PlayerJumped>().player = this;
+                    if (!IsGrounded) {
                         jumpState = JumpState.InFlight;
                     }
                     break;
                 case JumpState.InFlight:
-                    if (IsGrounded)
-                    {
-                        //Schedule<PlayerLanded>().player = this;
+                    if (IsGrounded) {
                         jumpState = JumpState.Landed;
                     }
                     break;
@@ -93,18 +67,13 @@ namespace Platformer.Mechanics
             }
         }
 
-        protected override void ComputeVelocity()
-        {
-            if (jump && IsGrounded)
-            {
+        protected override void ComputeVelocity() {
+            if (jump && IsGrounded) {
                 velocity.y = jumpTakeOffSpeed * 1.5f;//model.jumpModifier;
                 jump = false;
-            }
-            else if (stopJump)
-            {
+            } else if (stopJump) {
                 stopJump = false;
-                if (velocity.y > 0)
-                {
+                if (velocity.y > 0) {
                     velocity.y = velocity.y * 0.5f;//model.jumpDeceleration;
                 }
             }
@@ -120,8 +89,7 @@ namespace Platformer.Mechanics
             targetVelocity = move * maxSpeed;
         }
 
-        public enum JumpState
-        {
+        public enum JumpState {
             Grounded,
             PrepareToJump,
             Jumping,

@@ -354,12 +354,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 965059814}
-  - component: {fileID: 965059818}
   - component: {fileID: 965059813}
   - component: {fileID: 965059816}
   - component: {fileID: 965059815}
   - component: {fileID: 965059817}
-  - component: {fileID: 965059819}
+  - component: {fileID: 965059818}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -377,7 +376,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -401,7 +400,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 965059812}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.1, y: 13.4, z: 0}
+  m_LocalPosition: {x: -12.49, y: 16.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 110876174}
@@ -517,19 +516,6 @@ MonoBehaviour:
   jumpState: 0
   collider2d: {fileID: 0}
   controlEnabled: 1
---- !u!114 &965059819
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 965059812}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88a97211558f80044bf3593a35b06ace, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  particle: {fileID: 1140297553}
 --- !u!1 &1140297550
 GameObject:
   m_ObjectHideFlags: 0

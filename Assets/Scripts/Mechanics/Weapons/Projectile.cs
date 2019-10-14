@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour {
+public class Projectile : MonoBehaviour {
     public float lifeTime = 2.0f;
     private float deathTime;
+    public int damage;
 
     void Start() {
         deathTime = Time.time + lifeTime;
@@ -12,17 +13,17 @@ public class Bullet : MonoBehaviour {
 
     void Update() {
         if(Time.time >= deathTime) {
-            destroyBullet();
+            destroyProjectile();
         }
     }
 
     void OnCollisionEnter2D(Collision2D collision) {
-        if(!collision.gameObject.CompareTag("Bullet")) {
-            destroyBullet();
+        if(!collision.gameObject.CompareTag("Projectile")) {
+            destroyProjectile();
         }
     }
 
-    void destroyBullet() {
+    void destroyProjectile() {
         Destroy(gameObject);
     }
 }

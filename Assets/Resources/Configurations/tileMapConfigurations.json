@@ -49,7 +49,7 @@
 			"groupId": "simpleTest2",
 			"relativePathConfigurations": [
 				{
-					"variation": 1,
+					"variation": 0,
 					"fillGround": true
 				}
 			]

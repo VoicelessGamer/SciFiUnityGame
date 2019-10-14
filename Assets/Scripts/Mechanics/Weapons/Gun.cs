@@ -20,12 +20,7 @@ public abstract class Gun : Weapon {
     }
 
     protected Quaternion getInitialRotation() {
-        Vector3 mouse = Input.mousePosition;
-        Vector3 screenPoint = Camera.main.WorldToScreenPoint(transform.position);
-        Vector3 offset = new Vector2(mouse.x - screenPoint.x, mouse.y - screenPoint.y);
-        
-        //angle directly pointing at the mouse pointer
-        float centredAngle = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
+        float centredAngle = gameObject.transform.eulerAngles.z;
 
         //alter trajectory based on accuracy
         float actualAngle = Random.Range(centredAngle - deviationAngle, centredAngle + deviationAngle);
@@ -35,6 +30,8 @@ public abstract class Gun : Weapon {
 
     protected override void attack() {
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, getInitialRotation());
+
+        bullet.GetComponent<Projectile>().damage = damage;
 
         Rigidbody2D rBody = (Rigidbody2D)bullet.GetComponent(typeof(Rigidbody2D));
 
