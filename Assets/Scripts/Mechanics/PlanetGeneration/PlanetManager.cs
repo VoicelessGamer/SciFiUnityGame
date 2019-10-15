@@ -81,7 +81,7 @@ public class PlanetManager : MonoBehaviour
                 
                 this.planetTileMappings.Add(index, tileMapping);
                 //generate liquids for section
-                liquids = liquidGen.GeneratorLiquid(tileMapping, this.sectionWidth * i, this.sectionWidth, this.sectionHeight, liquid, i);
+                liquids = liquidGen.GeneratorLiquid(tileMapping, this.sectionWidth * i, this.sectionWidth, this.sectionHeight, liquid);
                 
             } else {
                 tileMapping = this.planetTileMappings[index];
@@ -95,10 +95,11 @@ public class PlanetManager : MonoBehaviour
             {
                 
                 GameObject liquidGO = (GameObject)Instantiate(liquid, liquids[l].getPosition(), Quaternion.identity);
-                liquidGO.GetComponent<DynamicWater>().bound.top = liquids[l].getSizeY();
-                liquidGO.GetComponent<DynamicWater>().bound.right = 0;
-                liquidGO.GetComponent<DynamicWater>().bound.bottom = -1;
-                liquidGO.GetComponent<DynamicWater>().bound.left = -liquids[l].getSizeX();
+                
+                liquidGO.GetComponent<DynamicWater>().bound.top = 0;
+                liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX();
+                liquidGO.GetComponent<DynamicWater>().bound.bottom = liquids[l].getSizeY();
+                liquidGO.GetComponent<DynamicWater>().bound.left = 0;
             }
             
 
