@@ -26,8 +26,10 @@ public class ShipEditCamera : MonoBehaviour {
     void Update() {
         float scrollAxis = Input.GetAxis("Mouse ScrollWheel");
 
+        //zooming range of the camera based on mouse scrolling
         cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scrollAxis, minZoomClamp, maxZoomClamp);
 
+        //when mouse is at edge of the screen the camera will pan in that direction
         if (!panBounds.Contains(Input.mousePosition)) {
             Vector3 pos = Input.mousePosition - panBounds.ClosestPoint(Input.mousePosition);
             Vector3 newPosition = transform.position + (new Vector3(pos.x, pos.y, 0) * panSpeed * Time.deltaTime);
