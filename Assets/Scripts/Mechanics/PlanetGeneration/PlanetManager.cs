@@ -97,9 +97,9 @@ public class PlanetManager : MonoBehaviour
                 GameObject liquidGO = (GameObject)Instantiate(liquid, liquids[l].getPosition(), Quaternion.identity);
                 
                 liquidGO.GetComponent<DynamicWater>().bound.top = 0;
-                liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX();
-                liquidGO.GetComponent<DynamicWater>().bound.bottom = liquids[l].getSizeY();
-                liquidGO.GetComponent<DynamicWater>().bound.left = 0;
+                liquidGO.GetComponent<DynamicWater>().bound.right = 0;
+                liquidGO.GetComponent<DynamicWater>().bound.bottom = -liquids[l].getSizeY();
+                liquidGO.GetComponent<DynamicWater>().bound.left = -liquids[l].getSizeX();
             }
             
 

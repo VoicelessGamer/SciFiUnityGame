@@ -11,10 +11,10 @@ public class LiquidGenerator : MonoBehaviour
     public List<Liquid> GeneratorLiquid(int[,] tileMapping, int sectionWidth, int mapLength, int sectionHeight, GameObject liquid)
     {
         List<Liquid> liquids = new List<Liquid>();
-        List<Vector2> tempLiquids = new List<Vector2>();
+        List<Liquid> tempLiquids = new List<Liquid>();
         List<Vector2> tempSizes = new List<Vector2>();
-        int depth = 5;
-        int length = 5;
+        int depth = 15;
+        int length = 15;
         this.initialX = (int)(mapLength * 0.5f);
         this.initialY = (int)(sectionHeight * 0.5f);
         //temporary choose weighting of liquid...this needs to be in config for liquids or biomes
@@ -31,20 +31,27 @@ public class LiquidGenerator : MonoBehaviour
                     int firstLand = x ;
                     int deepestLand = y;
                     for (int l = 0; l < length; l++)
-                    {                        
-                        if (tileMapping[x + l, y] == 1 && firstLand == x)
+                    {
+                        if (l + x < mapLength)
                         {
-                            firstLand = x + l;
+                            if (tileMapping[x + l, y] == 1 && firstLand == x)
+                            {
+                                firstLand = x + l;
+                            }
                         }
                         int restDepth = y;
                         //check for depth space
                         for (int d = 0; d < depth; d++)
                         {
-                            if (tileMapping[x + l, y + d] == 1 && restDepth == y)
+                            if (d + y < sectionHeight)
                             {
-                                if (deepestLand < y + d) {
-                                    deepestLand = y + d;
-                                    restDepth = y + d;
+                                if (tileMapping[x + l, y + d] == 1 && restDepth == y)
+                                {
+                                    if (deepestLand < y + d)
+                                    {
+                                        deepestLand = y + d;
+                                        restDepth = y + d;
+                                    }
                                 }
                             }
                         }
@@ -58,16 +65,15 @@ public class LiquidGenerator : MonoBehaviour
                         //{
                         bool cantPlace = false;
                         for (int q = 0; q < tempLiquids.Count; q++)
-                        {   if (tempLiquids[q].x < x + 1 || firstLand < tempSizes[q].x)
-                                if (tempLiquids[q].y < y || deepestLand < tempSizes[q].y)
+                        {   if (tempLiquids[q].getPosition().x < x + 1 || firstLand < tempLiquids[q].getSizeX())
+                                if (tempLiquids[q].getPosition().y < y || deepestLand < tempLiquids[q].getSizeY())
                                     cantPlace = true;
                         }
                         if (!cantPlace)
                         {
-                            Liquid newLiquid = new Liquid(new Vector3(x - sectionWidth  + this.initialX + (this.initialX/2), this.initialY - y), firstLand - x, deepestLand - y, liquid);
+                            Liquid newLiquid = new Liquid(new Vector3((x + (sectionWidth / 2)) - this.initialX, this.initialY - y - 3),x - firstLand, y - deepestLand, liquid);
                             liquids.Add(newLiquid);
-                            tempLiquids.Add(new Vector2(x, y + 1));
-                            tempSizes.Add(new Vector2(firstLand - x, deepestLand - y));
+                            tempLiquids.Add(newLiquid);
                         }
                         //}
                     }
