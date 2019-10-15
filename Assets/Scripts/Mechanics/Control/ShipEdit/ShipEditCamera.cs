@@ -6,12 +6,21 @@ public class ShipEditCamera : MonoBehaviour {
     public float zoomAmount = 0; //With Positive and negative values
     public float minZoomClamp = 2;
     public float maxZoomClamp = 8;
+    public float panSpeed = 0.1f;
+    //public Bounds maxPanBounds;
+    public float maxPanWidth = 10f;
+    public float maxPanHeight = 5f;
+
+    [Range(0, 1)]
+    public float panWidthPercentage = 0.95f;
+    [Range(0, 1)]
+    public float panHeightPercentage = 0.95f;
 
     private Camera cam;
-    private Vector3 dragOrigin;
-
+    private Bounds panBounds;
     void Awake() {
-        cam = this.GetComponent<Camera>();
+        cam = GetComponent<Camera>();
+        panBounds = new Bounds(new Vector3(Screen.width / 2, Screen.height / 2, 0), new Vector3(Screen.width * panWidthPercentage, Screen.height * panHeightPercentage, 0));
     }
 
     void Update() {
@@ -19,17 +28,14 @@ public class ShipEditCamera : MonoBehaviour {
 
         cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scrollAxis, minZoomClamp, maxZoomClamp);
 
-        if(Input.GetButtonDown("Fire2")) {
-            dragOrigin = Input.mousePosition;
-        } else if (Input.GetButton("Fire2")) {
-            Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
-            Vector3 move = new Vector3(pos.x, pos.y, 0);
+        if (!panBounds.Contains(Input.mousePosition)) {
+            Vector3 pos = Input.mousePosition - panBounds.ClosestPoint(Input.mousePosition);
+            Vector3 newPosition = transform.position + (new Vector3(pos.x, pos.y, 0) * panSpeed * Time.deltaTime);
 
-            transform.Translate(move, Space.World);
+            newPosition.x = Mathf.Clamp(newPosition.x, -maxPanWidth, maxPanWidth);
+            newPosition.y = Mathf.Clamp(newPosition.y, -maxPanHeight, maxPanHeight);
 
-            /*Vector3 distance = dragOrigin - Input.mousePosition;
-            transform.position +=  distance;
-            dragOrigin = Input.mousePosition;*/
+            transform.position = newPosition;
         }
     }
 }

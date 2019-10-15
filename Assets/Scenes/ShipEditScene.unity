@@ -334,6 +334,11 @@ MonoBehaviour:
   zoomAmount: 0
   minZoomClamp: 2
   maxZoomClamp: 8
+  panSpeed: 0.1
+  maxPanWidth: 10
+  maxPanHeight: 5
+  panWidthPercentage: 0.9
+  panHeightPercentage: 0.9
 --- !u!1 &712498246
 GameObject:
   m_ObjectHideFlags: 0
