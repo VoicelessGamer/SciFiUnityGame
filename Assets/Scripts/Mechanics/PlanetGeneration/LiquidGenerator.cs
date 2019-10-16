@@ -57,8 +57,11 @@ public class LiquidGenerator : MonoBehaviour
                         }
 
                     }
+                    int liqWidth = x - firstLand;
+                    int liqHeight = (y + this.initialY) - deepestLand;
+
                     //length and depth are at least > 2 gap
-                    if (firstLand > x + 1 && deepestLand > y + 1 )
+                    if (Mathf.Abs(liqWidth) > 1 && Mathf.Abs(liqHeight) > 1 )
                     {
                         //bool canPlace = Random.Range(0, 100) < getScaledPlacementChance(y, x) ? true : false;
                         //if (canPlace)
@@ -71,7 +74,8 @@ public class LiquidGenerator : MonoBehaviour
                         }
                         if (!cantPlace)
                         {
-                            Liquid newLiquid = new Liquid(new Vector3((x + (sectionWidth / 2)) - this.initialX, this.initialY - y - 3),x - firstLand, y - deepestLand, liquid);
+                            
+                            Liquid newLiquid = new Liquid(new Vector3(((x + (sectionWidth / 2)) - this.initialX) + liqWidth/2, (this.initialY - y) - liqHeight/2), liqWidth, liqHeight, liquid);
                             liquids.Add(newLiquid);
                             tempLiquids.Add(newLiquid);
                         }

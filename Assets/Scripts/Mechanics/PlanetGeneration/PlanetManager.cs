@@ -90,16 +90,16 @@ public class PlanetManager : MonoBehaviour
             //building section, sending through the section x position to be placed
             GameObject section = this.sectionGen[r].buildSection(tileMapping, initialX + (this.sectionWidth * i));
             section.name = "Section-" + index;
-
+            
             for (int l = 0; l < liquids.Count; l++)
             {
                 
                 GameObject liquidGO = (GameObject)Instantiate(liquid, liquids[l].getPosition(), Quaternion.identity);
-                
-                liquidGO.GetComponent<DynamicWater>().bound.top = 0;
-                liquidGO.GetComponent<DynamicWater>().bound.right = 0;
-                liquidGO.GetComponent<DynamicWater>().bound.bottom = -liquids[l].getSizeY();
-                liquidGO.GetComponent<DynamicWater>().bound.left = -liquids[l].getSizeX();
+
+                liquidGO.GetComponent<DynamicWater>().bound.top = liquids[l].getSizeY()/2;
+                liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX() / 2;
+                liquidGO.GetComponent<DynamicWater>().bound.bottom = -liquids[l].getSizeY()/2;
+                liquidGO.GetComponent<DynamicWater>().bound.left = liquids[l].getSizeX()/2;
             }
             
 
