@@ -81,7 +81,7 @@ public class PlanetManager : MonoBehaviour
                 
                 this.planetTileMappings.Add(index, tileMapping);
                 //generate liquids for section
-                liquids = liquidGen.GeneratorLiquid(tileMapping, this.sectionWidth * i, this.sectionWidth, this.sectionHeight, liquid);
+                //liquids = liquidGen.GeneratorLiquid(tileMapping, this.sectionWidth * i, this.sectionWidth, this.sectionHeight, liquid);
                 
             } else {
                 tileMapping = this.planetTileMappings[index];
@@ -90,16 +90,22 @@ public class PlanetManager : MonoBehaviour
             //building section, sending through the section x position to be placed
             GameObject section = this.sectionGen[r].buildSection(tileMapping, initialX + (this.sectionWidth * i));
             section.name = "Section-" + index;
-            
+
+            liquids = liquidGen.GeneratorLiquid(tileMapping, this.sectionWidth * i, this.sectionWidth, this.sectionHeight, liquid, section);
+
             for (int l = 0; l < liquids.Count; l++)
             {
                 
                 GameObject liquidGO = (GameObject)Instantiate(liquid, liquids[l].getPosition(), Quaternion.identity);
 
-                liquidGO.GetComponent<DynamicWater>().bound.top = liquids[l].getSizeY()/2;
+                /*liquidGO.GetComponent<DynamicWater>().bound.top = liquids[l].getSizeY()/2;
                 liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX() / 2;
                 liquidGO.GetComponent<DynamicWater>().bound.bottom = -liquids[l].getSizeY()/2;
-                liquidGO.GetComponent<DynamicWater>().bound.left = liquids[l].getSizeX()/2;
+                liquidGO.GetComponent<DynamicWater>().bound.left = liquids[l].getSizeX()/2;*/
+                liquidGO.GetComponent<DynamicWater>().bound.top = -liquids[l].getSizeY() / 2;
+                liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX() / 2;
+                liquidGO.GetComponent<DynamicWater>().bound.bottom = liquids[l].getSizeY() / 2;
+                liquidGO.GetComponent<DynamicWater>().bound.left = liquids[l].getSizeX() / 2;
             }
             
 
