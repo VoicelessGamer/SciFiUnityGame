@@ -1,21 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class ShipEditor : MonoBehaviour {
 
     public GameObject testObject;
     public GameObject selectedObject;
+    public GameObject gridObject;
+
+    private Color activeColour;
+    private Tilemap activeTilemap;
 
     void Start() {
+        testObject.GetComponent<Tilemap>().CompressBounds();
         setSelectedObject(testObject);
     }
 
     public void setSelectedObject(GameObject go) {
-        selectedObject = Instantiate(go, new Vector3(0,0,0), Quaternion.identity);
-        Color tmp = selectedObject.GetComponent<SpriteRenderer>().color;
-        tmp.a = 0.5f;
-        selectedObject.GetComponent<SpriteRenderer>().color = tmp;
+        selectedObject = Instantiate(go, Input.mousePosition, Quaternion.identity, gridObject.transform);
+        activeTilemap = selectedObject.GetComponent<Tilemap>();
+        activeColour = activeTilemap.color;
+        activeColour.a = 0.5f;
+        activeTilemap.color = activeColour;
     }
 
     // Update is called once per frame
@@ -29,8 +36,13 @@ public class ShipEditor : MonoBehaviour {
         //update the position of the object following the mouse
         selectedObject.transform.position = pos;
 
-        if(Input.GetButtonDown("Fire1")) {
-            Instantiate(testObject, pos, Quaternion.identity);
+        if (Input.GetButtonDown("Fire1")) {
+            activeColour.a = 1f;
+            activeTilemap.color = activeColour;
+
+            Tilemap tm = selectedObject.GetComponent<Tilemap>();
+            Debug.Log(tm.cellBounds);
+            setSelectedObject(testObject);
         }
     }
 }
