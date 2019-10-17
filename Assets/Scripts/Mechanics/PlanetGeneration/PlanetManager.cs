@@ -102,10 +102,11 @@ public class PlanetManager : MonoBehaviour
                 liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX() / 2;
                 liquidGO.GetComponent<DynamicWater>().bound.bottom = -liquids[l].getSizeY()/2;
                 liquidGO.GetComponent<DynamicWater>().bound.left = liquids[l].getSizeX()/2;*/
-                liquidGO.GetComponent<DynamicWater>().bound.top = -liquids[l].getSizeY() / 2;
-                liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX() / 2;
-                liquidGO.GetComponent<DynamicWater>().bound.bottom = liquids[l].getSizeY() / 2;
-                liquidGO.GetComponent<DynamicWater>().bound.left = liquids[l].getSizeX() / 2;
+                liquidGO.GetComponent<DynamicWater>().bound.top = -liquids[l].getSizeY();// / 2;
+                liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX();/// 2;
+                liquidGO.GetComponent<DynamicWater>().bound.bottom = 0;//-liquids[l].getSizeY();// / 2;
+                liquidGO.GetComponent<DynamicWater>().bound.left = 1;//liquids[l].getSizeX() / 2;
+                liquidGO.GetComponent<DynamicWater>().quality = Mathf.Abs(liquids[l].getSizeX()) * 10;
             }
             
 

@@ -68,8 +68,8 @@ public class LiquidGenerator : MonoBehaviour
                         }
                     }
 
-                    float liqWidth = -globalPlace.x + firstLand;
-                    float liqHeight = -globalPlace.y + deepestLand;
+                    float liqWidth = globalPlace.x - firstLand;
+                    float liqHeight = globalPlace.y - deepestLand;
 
                     //length and depth are at least > 2 gap
                     if (Mathf.Abs(liqWidth) > 1 && Mathf.Abs(liqHeight) > 1)
