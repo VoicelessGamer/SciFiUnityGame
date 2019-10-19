@@ -48,43 +48,17 @@ public class ShipEditor : MonoBehaviour {
         if (Input.GetButtonDown("Fire1")) {
             switch(editorMode) {
                 case EditorMode.Placement:
+                    //quick return if missing an attatched object
                     if(attatchedObject == null) {
                         break;
                     }
-                    bool canPlace = true;
 
                     Tilemap tilemap = attatchedObject.GetComponent<Tilemap>();
 
                     List<Vector3> tilemapPositions = new List<Vector3>();
 
-                    //check all tiles in the current selected object
-                    for (int r = tilemap.cellBounds.xMin; r < tilemap.cellBounds.xMax; r++) {
-                        for (int c = tilemap.cellBounds.yMin; c < tilemap.cellBounds.yMax; c++) {
-                            //local position in tilemap
-                            Vector3Int localPos = new Vector3Int(r, c, (int)tilemap.transform.position.z);
-
-                            //check there is a tile in the currect position
-                            if (tilemap.GetTile(localPos) != null) {
-                                //local position translated to world coordinates
-                                Vector3 worldPos = tilemap.CellToWorld(localPos);
-                                //if position already occupied then can't be placed
-                                if (occupiedSpaces.Contains(worldPos) || !IsPointInPolygon(worldPos)) {
-                                    canPlace = false;
-                                    break;
-                                } else {
-                                    //add the world position to a list 
-                                    tilemapPositions.Add(worldPos);
-                                }
-                            }
-                        }
-                        //quick return
-                        if (!canPlace) {
-                            break;
-                        }
-                    }
-
                     //if tilemap can be placed
-                    if (canPlace) {
+                    if (tilemapIsPlaceable(tilemap, tilemapPositions)) {
                         //add all positions to occupid spaces for future checks
                         occupiedSpaces.AddRange(tilemapPositions);
 
@@ -97,24 +71,63 @@ public class ShipEditor : MonoBehaviour {
                     }
                     break;
                 case EditorMode.Deletion:
+                    //get world position of click
                     Vector3 cursorPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    //match the z position to the grid
                     cursorPos.z = grid.transform.position.z;
-                    foreach(Transform transform in grid.transform) {
-                        cursorPos.z = transform.position.z;
-                        if(transform.GetComponent<CompositeCollider2D>().bounds.Contains(cursorPos)) {
-                            Debug.Log("HIT");
-                        } else {
-                            Debug.Log("NOPE");
+                    //iterate all tilemap components in the grid child objects
+                    foreach(Tilemap tm in grid.GetComponentsInChildren<Tilemap>()) {
+                        //check for a tile in the cell position clicked on
+                        if(tm.GetTile(tm.WorldToCell(cursorPos)) != null) {
+
+                            freeOccupiedSpaces(tm);
+
+                            Destroy(tm.gameObject);
+                            break;
                         }
                     }
-                    /*ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    if (Physics.Raycast(ray, out hit)) {
-                        GameObject g = hit.transform.gameObject;
-                        Debug.Log("HIT");
-                    } else {
-                        Debug.Log("NOPE");
-                    }*/
                     break;
+            }
+        }
+    }
+
+    public bool tilemapIsPlaceable(Tilemap tilemap, List<Vector3> tilemapPositions) {
+        //check all tiles in the current selected object
+        for (int r = tilemap.cellBounds.xMin; r < tilemap.cellBounds.xMax; r++) {
+            for (int c = tilemap.cellBounds.yMin; c < tilemap.cellBounds.yMax; c++) {
+                //local position in tilemap
+                Vector3Int localPos = new Vector3Int(r, c, (int)tilemap.transform.position.z);
+
+                //check there is a tile in the currect position
+                if (tilemap.GetTile(localPos) != null) {
+                    //local position translated to world coordinates
+                    Vector3 worldPos = tilemap.CellToWorld(localPos);
+                    //if position already occupied then can't be placed
+                    if (occupiedSpaces.Contains(worldPos) || !isPointInPolygon(worldPos)) {
+                        return false;
+                    } else {
+                        //add the world position to a list 
+                        tilemapPositions.Add(worldPos);
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public void freeOccupiedSpaces(Tilemap tilemap) {
+        //check all tiles in the current selected object
+        for (int r = tilemap.cellBounds.xMin; r < tilemap.cellBounds.xMax; r++) {
+            for (int c = tilemap.cellBounds.yMin; c < tilemap.cellBounds.yMax; c++) {
+                //local position in tilemap
+                Vector3Int localPos = new Vector3Int(r, c, (int)tilemap.transform.position.z);
+
+                //check there is a tile in the currect position
+                if (tilemap.GetTile(localPos) != null) {
+                    //remove position from list of occupied spaces
+                    occupiedSpaces.Remove(tilemap.CellToWorld(localPos));
+                }
             }
         }
     }
@@ -133,7 +146,7 @@ public class ShipEditor : MonoBehaviour {
         attatchedObject = null;
     }
 
-    public bool IsPointInPolygon(Vector2 point) {
+    public bool isPointInPolygon(Vector2 point) {
         int polygonLength = gridPolygonBounds.Length, i = 0;
         bool inside = false;
         // x, y for tested point.
