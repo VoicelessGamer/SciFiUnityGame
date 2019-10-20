@@ -73,7 +73,7 @@ public class PlanetManager : MonoBehaviour
             int[,] tileMapping;
             int index = sectionIndices[i];
             int r = Random.Range(0, sectionGen.Count);
-            List<Liquid> liquids = new List<Liquid>();
+            List<GameObject> liquids = new List<GameObject>();
             //if section not in save data, create new section
             if (!this.planetTileMappings.ContainsKey(index)) {
                 
@@ -93,21 +93,18 @@ public class PlanetManager : MonoBehaviour
 
             liquids = liquidGen.GeneratorLiquid(tileMapping, this.sectionWidth * i, this.sectionWidth, this.sectionHeight, liquid, section);
 
-            for (int l = 0; l < liquids.Count; l++)
+            /*for (int l = 0; l < liquids.Count; l++)
             {
                 
                 GameObject liquidGO = (GameObject)Instantiate(liquid, liquids[l].getPosition(), Quaternion.identity);
 
-                /*liquidGO.GetComponent<DynamicWater>().bound.top = liquids[l].getSizeY()/2;
-                liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX() / 2;
-                liquidGO.GetComponent<DynamicWater>().bound.bottom = -liquids[l].getSizeY()/2;
-                liquidGO.GetComponent<DynamicWater>().bound.left = liquids[l].getSizeX()/2;*/
-                liquidGO.GetComponent<DynamicWater>().bound.top = -liquids[l].getSizeY();// / 2;
-                liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX();/// 2;
-                liquidGO.GetComponent<DynamicWater>().bound.bottom = 0;//-liquids[l].getSizeY();// / 2;
-                liquidGO.GetComponent<DynamicWater>().bound.left = 1;//liquids[l].getSizeX() / 2;
+                
+                liquidGO.GetComponent<DynamicWater>().bound.top = -liquids[l].getSizeY() / 2;
+                liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX()/ 2;
+                liquidGO.GetComponent<DynamicWater>().bound.bottom = liquids[l].getSizeY() / 2;
+                liquidGO.GetComponent<DynamicWater>().bound.left = liquids[l].getSizeX() / 2;
                 liquidGO.GetComponent<DynamicWater>().quality = Mathf.Abs(liquids[l].getSizeX()) * 10;
-            }
+            }*/
             
 
             //set the boundaries, for the player to cross to load next and delete furthest sections, to the edges of the centred section
