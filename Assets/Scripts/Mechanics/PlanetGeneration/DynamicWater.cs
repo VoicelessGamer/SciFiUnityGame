@@ -151,7 +151,7 @@ public class DynamicWater : MonoBehaviour
     {
         timer = 3f;
         float radius = col.bounds.max.x - col.bounds.min.x;
-        Vector2 center = new Vector2(col.bounds.center.x, bound.top);
+        Vector2 center = new Vector2(col.bounds.center.x, bound.bottom);
         // instantiate splash particle
         GameObject splashGO = Instantiate(splash, new Vector3(center.x, center.y, 0), Quaternion.Euler(0, 0, 60));
         Destroy(splashGO, 2f);

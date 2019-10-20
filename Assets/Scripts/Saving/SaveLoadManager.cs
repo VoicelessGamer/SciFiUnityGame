@@ -88,6 +88,31 @@ public static class SaveLoadManager {
 
         return new Dictionary<int, int[,]>();
     }
+
+    public static void saveLiquids(Dictionary<int,List<Liquid>> liquids)
+    {
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream stream = new FileStream(Application.persistentDataPath + "/liquids.sav", FileMode.Create);
+
+        LiquidMap liquidMap = new LiquidMap(liquids);
+
+        bf.Serialize(stream, liquidMap);
+        stream.Close();
+    }
+
+    public static Dictionary<int,List<Liquid>> loadLiquids()
+    {
+        if(File.Exists(Application.persistentDataPath + "/liquids.sav"))
+        {
+            BinaryFormatter bf = new BinaryFormatter();            
+            FileStream stream = new FileStream(Application.persistentDataPath + "/liquids.sav", FileMode.Open);
+            Dictionary<int, List<Liquid>>  liquids = ((LiquidMap)bf.Deserialize(stream)).liquidMap;
+            stream.Close();
+
+            return liquids;
+        }
+        return new Dictionary<int, List<Liquid>>();
+    }
 }
 
 [Serializable]
@@ -136,5 +161,14 @@ public class TileMapping {
 
     public TileMapping(Dictionary<int, int[,]> mapping) {
         this.mapping = mapping;
+    }
+}
+
+[Serializable]
+public class LiquidMap {
+    public Dictionary<int, List<Liquid>> liquidMap;
+
+    public LiquidMap(Dictionary<int, List<Liquid>> liquidMap) {
+        this.liquidMap = liquidMap;
     }
 }

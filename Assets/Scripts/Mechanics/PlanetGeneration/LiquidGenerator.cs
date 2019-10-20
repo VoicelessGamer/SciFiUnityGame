@@ -9,12 +9,10 @@ public class LiquidGenerator : MonoBehaviour
     protected int placementChance;
     protected int initialX;
     protected int initialY;
-    public List<GameObject> GeneratorLiquid(int[,] tileMapping, int sectionWidth, int mapLength, int sectionHeight, GameObject liquid, GameObject section)
+    public List<Liquid> GeneratorLiquid(int[,] tileMapping, int sectionWidth, int mapLength, int sectionHeight, GameObject liquid, GameObject section)
     {
-        //List<Liquid> liquids = new List<Liquid>();
-        List<Liquid> tempLiquids = new List<Liquid>();
         List<Vector2> tempSizes = new List<Vector2>();
-        List<GameObject> liquids = new List<GameObject>();
+        List<Liquid> liquids = new List<Liquid>();
         int depth = 15;
         int length = 15;
         this.initialX = (int)(mapLength * 0.5f);
@@ -45,7 +43,7 @@ public class LiquidGenerator : MonoBehaviour
                         {
                             if (tileMap.HasTile(localPlacePlusLength) && firstLand == globalPlace.x)
                             {
-                                firstLand = globalPlace.x + l;
+                                firstLand = globalPlace.x + l + 1;
                             }
                         }
 
@@ -58,9 +56,9 @@ public class LiquidGenerator : MonoBehaviour
                             {
                                 if (tileMap.HasTile(localPlacePlusLengthDepth) && !tileMap.HasTile(localPlaceDepth))
                                 {
-                                    if (deepestLand < globalPlace.y + d)
+                                    if (deepestLand > globalPlace.y - d)
                                     {
-                                        deepestLand = globalPlace.y + d;
+                                        deepestLand = globalPlace.y - d;
                                     }
                                 }
                             }
@@ -78,28 +76,19 @@ public class LiquidGenerator : MonoBehaviour
                         //{
                         bool cantPlace = false;
                         if (liquids.Count > 0)
-                            cantPlace = preventSpawn(globalPlace.x + ((int)liqWidth / 2), globalPlace.y, liquids);
+                            cantPlace = preventSpawn(globalPlace.x + ((int)liqWidth / 2), globalPlace.y, liquids, liqWidth, liqHeight);
 
-                        /*for (int q = 0; q < tempLiquids.Count; q++)
-                        {
-                            if (tempLiquids[q].getPosition().x == globalPlace.x + ((int)liqWidth / 2) && tempLiquids[q].getPosition().x + tempLiquids[q].getSizeX() >= (globalPlace.x + ((int)liqWidth / 2)) + liqWidth)
-                                if (tempLiquids[q].getPosition().y == globalPlace.y || deepestLand <= tempLiquids[q].getPosition().y + tempLiquids[q].getSizeY())
-                                    cantPlace = true;
-                        }*/
                         if (!cantPlace)
                         {
-
-                            Liquid newLiquid = new Liquid(new Vector3((int)globalPlace.x + ((int)liqWidth/2), (int)globalPlace.y), (int)liqWidth, (int)liqHeight, liquid);
-                                                        
-
-                            liquids.Add((GameObject)Instantiate(liquid, newLiquid.getPosition(), Quaternion.identity));
-                            liquids[liquids.Count-1].GetComponent<DynamicWater>().bound.top = newLiquid.getSizeY() / 2;
-                            liquids[liquids.Count-1].GetComponent<DynamicWater>().bound.right = newLiquid.getSizeX() / 2;
-                            liquids[liquids.Count-1].GetComponent<DynamicWater>().bound.bottom = -newLiquid.getSizeY() / 2;
-                            liquids[liquids.Count-1].GetComponent<DynamicWater>().bound.left = -newLiquid.getSizeX() / 2;
-                            liquids[liquids.Count-1].GetComponent<DynamicWater>().quality = Mathf.Abs(newLiquid.getSizeX()) * 20;
-                        }
-                        //}
+                            Liquid.Bound bound;
+                            bound.top = -(int)liqHeight / 2;
+                            bound.right = (int)liqWidth / 2;
+                            bound.bottom = +(int)liqHeight / 2;
+                            bound.left = -(int)liqWidth / 2;
+                            Liquid newLiquid = new Liquid(new Vector3((int)globalPlace.x + ((int)liqWidth/2), (int)globalPlace.y), (int)liqWidth, (int)liqHeight, liquid, bound);
+                            liquids.Add(newLiquid);
+                            
+                        }                        
                     }
 
                 }
@@ -109,23 +98,48 @@ public class LiquidGenerator : MonoBehaviour
         return liquids;
     }
 
-    bool preventSpawn(float x, float y, List<GameObject> liquids)
+    bool preventSpawn(float x, float y, List<Liquid> liquids, float newWidth, float newHeight)
     {
         Vector3 spawnPos = new Vector3(x, y);
         
         for (int q = 0; q < liquids.Count; q++)
         {
-            float leftExtent = liquids[q].transform.position.x - liquids[q].GetComponent<DynamicWater>().bound.left;
-            float rightExtent = liquids[q].transform.position.x + liquids[q].GetComponent<DynamicWater>().bound.right;
-            float lowerExtent = liquids[q].transform.position.y - liquids[q].GetComponent<DynamicWater>().bound.bottom;
-            float upperExtent = liquids[q].transform.position.y + liquids[q].GetComponent<DynamicWater>().bound.top;
 
-            if(spawnPos.x > leftExtent && spawnPos.x <= rightExtent)
+            float leftExtent = liquids[q].getPosition().x + liquids[q].bound.left;
+            float rightExtent = liquids[q].getPosition().x + liquids[q].bound.right;
+            float lowerExtent = liquids[q].getPosition().y + liquids[q].bound.bottom;
+            float upperExtent = liquids[q].getPosition().y + liquids[q].bound.top;
+
+            if(spawnPos.x >= leftExtent && spawnPos.x <= rightExtent)
             {
                 if(spawnPos.y >= lowerExtent && spawnPos.y <= upperExtent)
                 {
                     return true;
                 }
+            }
+
+            bool inWidthSpace = false;
+            bool inHeightSpace = false;
+            for (int w = 0; w < newWidth; w++)
+            {
+                if (spawnPos.x + x >= leftExtent && spawnPos.x + x <= rightExtent)
+                {
+                    inWidthSpace = true;
+                    break;
+                }
+            }
+            for (int h = 0; h < newHeight; h++)
+            {
+                if (spawnPos.y + y >= lowerExtent && spawnPos.y + y <= upperExtent)
+                {
+                    inHeightSpace = true;
+                    break;
+                }
+            }
+
+            if (inWidthSpace && inHeightSpace)
+            {
+                return true;
             }
 
         }

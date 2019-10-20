@@ -23,7 +23,8 @@ public class PlanetManager : MonoBehaviour
     public List<Tile> tile;//temporary (replace with class that alters the 1's in the generated tile mapping array)
     [SerializeField]
     private Dictionary<int, int[,]> planetTileMappings;
-
+    private Dictionary<int, List<Liquid>> liquids;
+    
     //player deatils
     public Transform playerTransform;
 
@@ -31,13 +32,16 @@ public class PlanetManager : MonoBehaviour
     private LiquidGenerator liquidGen;
     private List<StandardSectionGenerator> sectionGen;
     private List<Section> sections;
+    private List<Liquids> sectionedLiquids;
     private float[] xBoundaries = new float[2];
 
     // Start is called before the first frame update
     void Start()
     {
+        this.liquids = SaveLoadManager.loadLiquids();
         this.planetTileMappings = SaveLoadManager.loadTileMappings();
         this.sections = new List<Section>();
+        this.sectionedLiquids = new List<Liquids>();
         this.sectionGen = new List<StandardSectionGenerator>();
         this.liquidGen = new LiquidGenerator();
         //create a new planet generator
@@ -59,6 +63,7 @@ public class PlanetManager : MonoBehaviour
         generateSectionsInView(0);
 
         SaveLoadManager.saveTileMappings(this.planetTileMappings);
+        SaveLoadManager.saveLiquids(this.liquids);
     }
 
     public void generateSectionsInView(int centredSection) {
@@ -71,9 +76,10 @@ public class PlanetManager : MonoBehaviour
 
         for (int i = 0; i < sectionIndices.Length; i++) {
             int[,] tileMapping;
+            List<Liquid> sectionLiquids;
+            List<GameObject> createdLiquids = new List<GameObject>();
             int index = sectionIndices[i];
             int r = Random.Range(0, sectionGen.Count);
-            List<GameObject> liquids = new List<GameObject>();
             //if section not in save data, create new section
             if (!this.planetTileMappings.ContainsKey(index)) {
                 
@@ -91,22 +97,23 @@ public class PlanetManager : MonoBehaviour
             GameObject section = this.sectionGen[r].buildSection(tileMapping, initialX + (this.sectionWidth * i));
             section.name = "Section-" + index;
 
-            liquids = liquidGen.GeneratorLiquid(tileMapping, this.sectionWidth * i, this.sectionWidth, this.sectionHeight, liquid, section);
+            //Add liquids
+            if (!this.liquids.ContainsKey(index)) {
+                sectionLiquids = liquidGen.GeneratorLiquid(tileMapping, this.sectionWidth * i, this.sectionWidth, this.sectionHeight, liquid, section);
+                this.liquids.Add(index, sectionLiquids);
+            } else {
+                sectionLiquids = this.liquids[index];
+            }
 
-            /*for (int l = 0; l < liquids.Count; l++)
+            for (int liq = 0; liq < sectionLiquids.Count; liq++)
             {
-                
-                GameObject liquidGO = (GameObject)Instantiate(liquid, liquids[l].getPosition(), Quaternion.identity);
-
-                
-                liquidGO.GetComponent<DynamicWater>().bound.top = -liquids[l].getSizeY() / 2;
-                liquidGO.GetComponent<DynamicWater>().bound.right = -liquids[l].getSizeX()/ 2;
-                liquidGO.GetComponent<DynamicWater>().bound.bottom = liquids[l].getSizeY() / 2;
-                liquidGO.GetComponent<DynamicWater>().bound.left = liquids[l].getSizeX() / 2;
-                liquidGO.GetComponent<DynamicWater>().quality = Mathf.Abs(liquids[l].getSizeX()) * 10;
-            }*/
-            
-
+                createdLiquids.Add((GameObject)Instantiate(liquid, sectionLiquids[liq].getPosition(), Quaternion.identity));
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.top = sectionLiquids[liq].bound.top;
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.right = sectionLiquids[liq].bound.right;
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.bottom = sectionLiquids[liq].bound.bottom;
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.left = sectionLiquids[liq].bound.left;
+                createdLiquids[liq].GetComponent<DynamicWater>().quality = Mathf.Abs(sectionLiquids[liq].getSizeX()) * 20;
+            }
             //set the boundaries, for the player to cross to load next and delete furthest sections, to the edges of the centred section
             if(index == centredSection) {
                 xBoundaries[0] = section.transform.position.x - halfWidth;
@@ -115,6 +122,7 @@ public class PlanetManager : MonoBehaviour
 
             //store for later use (loading new sections, deleting old)
             this.sections.Add(new Section(index, section));
+            this.sectionedLiquids.Add(new Liquids(index, createdLiquids));
         }
     }
 
@@ -125,6 +133,8 @@ public class PlanetManager : MonoBehaviour
     public void shiftView(int dir) {
         float halfWidth = (this.sectionWidth / 2);
         int[,] tileMapping;
+        List<Liquid> sectionLiquids;
+        List<GameObject> createdLiquids = new List<GameObject>();
         int r = Random.Range(0, sectionGen.Count);
         if (dir == 0) {
             //left
@@ -148,13 +158,45 @@ public class PlanetManager : MonoBehaviour
             //building section, sending through the section x position to be placed
             GameObject section = this.sectionGen[r].buildSection(tileMapping, (int)(go.transform.position.x - this.sectionWidth));
             section.name = "Section-" + index;
-            
+
+            //Add liquids
+            if (!this.liquids.ContainsKey(index))
+            {
+                sectionLiquids = liquidGen.GeneratorLiquid(tileMapping, this.sectionWidth * 0, this.sectionWidth, this.sectionHeight, liquid, section);
+                this.liquids.Add(index, sectionLiquids);
+            }
+            else
+            {
+                sectionLiquids = this.liquids[index];
+            }
+
+            for (int liq = 0; liq < sectionLiquids.Count; liq++)
+            {
+                createdLiquids.Add((GameObject)Instantiate(liquid, sectionLiquids[liq].getPosition(), Quaternion.identity));
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.top = sectionLiquids[liq].bound.top;
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.right = sectionLiquids[liq].bound.right;
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.bottom = sectionLiquids[liq].bound.bottom;
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.left = sectionLiquids[liq].bound.left;
+                createdLiquids[liq].GetComponent<DynamicWater>().quality = Mathf.Abs(sectionLiquids[liq].getSizeX()) * 20;
+            }
+
             //destroy right section
             Destroy(this.sections[2].getGameObject());
             this.sections.Remove(this.sections[2]);
+            
+            if (this.sectionedLiquids[2].getGameObject().Count > 0)
+            {
+                foreach (GameObject lGO in this.sectionedLiquids[2].getGameObject())
+                {
+                    Destroy(lGO);
+                }
+            }
+
+            this.sectionedLiquids.Remove(this.sectionedLiquids[2]);
 
             //insert new section
             this.sections.Insert(0, new Section(index, section));
+            this.sectionedLiquids.Insert(0, new Liquids(index, createdLiquids));
         } else {
             //right
             //update boundaries
@@ -177,13 +219,45 @@ public class PlanetManager : MonoBehaviour
             //building section, sending through the section x position to be placed
             GameObject section = this.sectionGen[r].buildSection(tileMapping, (int)(go.transform.position.x + this.sectionWidth));
             section.name = "Section-" + index;
-            
+
+            //Add liquids
+            if (!this.liquids.ContainsKey(index))
+            {
+                sectionLiquids = liquidGen.GeneratorLiquid(tileMapping, this.sectionWidth * 2, this.sectionWidth, this.sectionHeight, liquid, section);
+                this.liquids.Add(index, sectionLiquids);
+            }
+            else
+            {
+                sectionLiquids = this.liquids[index];
+            }
+
+            for (int liq = 0; liq < sectionLiquids.Count; liq++)
+            {
+                createdLiquids.Add((GameObject)Instantiate(liquid, sectionLiquids[liq].getPosition(), Quaternion.identity));
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.top = sectionLiquids[liq].bound.top;
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.right = sectionLiquids[liq].bound.right;
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.bottom = sectionLiquids[liq].bound.bottom;
+                createdLiquids[liq].GetComponent<DynamicWater>().bound.left = sectionLiquids[liq].bound.left;
+                createdLiquids[liq].GetComponent<DynamicWater>().quality = Mathf.Abs(sectionLiquids[liq].getSizeX()) * 20;
+            }
+
             //destroy left section
             Destroy(this.sections[0].getGameObject());
             this.sections.Remove(this.sections[0]);
 
+            if (this.sectionedLiquids[0].getGameObject().Count > 0)
+            {
+                foreach (GameObject lGO in this.sectionedLiquids[0].getGameObject())
+                {
+                    Destroy(lGO);
+                }
+            }
+
+            this.sectionedLiquids.Remove(this.sectionedLiquids[0]);
+
             //insert new section
             this.sections.Add(new Section(index, section));
+            this.sectionedLiquids.Add(new Liquids(index, createdLiquids));
         }
     }
 
