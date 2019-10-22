@@ -21,14 +21,8 @@ public class ShipEditor : MonoBehaviour {
 
     private List<Vector3> occupiedSpaces;
 
-    private Ray ray;
-    private RaycastHit hit;
-
     private void Awake() {
         occupiedSpaces = new List<Vector3>();
-    }
-
-    void Start() {
     }
 
     // Update is called once per frame

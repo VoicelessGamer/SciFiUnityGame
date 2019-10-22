@@ -107,87 +107,43 @@ public class OrbitingBody : CelestialBody {
         return semiMinorAxis;
     }
 
-    public void setSemiMinorAxis(float semiMinorAxis) {
-        this.semiMinorAxis = semiMinorAxis;
-    }
-
     public float getSemiMajorAxis() {
         return semiMajorAxis;
-    }
-
-    public void setSemiMajorAxis(float semiMajorAxis) {
-        this.semiMajorAxis = semiMajorAxis;
     }
 
     public float getEccentricity() {
         return eccentricity;
     }
 
-    public void setEccentricity(float eccentricity) {
-        this.eccentricity = eccentricity;
-    }
-
     public Vector3 getFoci1() {
         return foci1;
-    }
-
-    public void setFoci1(Vector3 foci1) {
-        this.foci1 = foci1;
     }
 
     public Vector3 getFoci2() {
         return foci2;
     }
 
-    public void setFoci2(Vector3 foci2) {
-        this.foci2 = foci2;
-    }
-
     public Vector3 getCentre() {
         return centre;
-    }
-
-    public void setCentre(Vector3 centre) {
-        this.centre = centre;
     }
 
     public Vector3 getLocalCentreVector() {
         return localCentreVector;
     }
 
-    public void setLocalCentreVector(Vector3 localCentreVector) {
-        this.localCentreVector = localCentreVector;
-    }
-
     public float getCurrentTheta() {
         return currentTheta;
-    }
-
-    public void setCurrentTheta(float currentTheta) {
-        this.currentTheta = currentTheta;
     }
 
     public float getCosineEllipseRotation() {
         return cosineEllipseRotation;
     }
 
-    public void setCosineEllipseRotation(float cosineEllipseRotation) {
-        this.cosineEllipseRotation = cosineEllipseRotation;
-    }
-
     public float getSineEllipseRotation() {
         return sineEllipseRotation;
     }
 
-    public void setSineEllipseRotation(float sineEllipseRotation) {
-        this.sineEllipseRotation = sineEllipseRotation;
-    }
-
     public float getDistanceFromFoci() {
         return distanceFromFoci;
-    }
-
-    public void setDistanceFromFoci(float distanceFromFoci) {
-        this.distanceFromFoci = distanceFromFoci;
     }
 }
