@@ -61,7 +61,7 @@ public class OrbitingBody : CelestialBody {
         distanceFromFoci = Random.Range(minDistanceFromFoci, minDistanceFromFoci + fociBodySeparationRange);
 
         //distance between the 2 foci points
-        float fociDistance = Mathf.Sqrt(Mathf.Pow(foci2.x - foci1.x, 2.0f) + Mathf.Pow(foci2.y - foci1.y, 2.0f));
+        float fociDistance = Vector3.Distance(foci2, foci1);
 
         //centre point of the ellipse
         centre = new Vector3(foci1.x + ((foci2.x - foci1.x) / 2), foci1.y + ((foci2.y - foci1.y) / 2), 0);

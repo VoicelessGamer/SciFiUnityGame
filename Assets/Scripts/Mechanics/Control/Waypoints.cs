@@ -6,7 +6,6 @@ public class Waypoints : MonoBehaviour {
     public GameObject wayPointIcon;
     public Transform playerTransform;
     public bool includeSubBodies;
-    public float waypointRotationOffset = 45f;
     //public int maxPointers;
 
     [Range(0, 1)]
@@ -24,8 +23,10 @@ public class Waypoints : MonoBehaviour {
     private float pBoundsHeight;
     private float halfPBoundsWidth;
     private float halfPBoundsHeight;
+    private readonly float twoPi = Mathf.PI * 2; 
     private float arctangentValue;
     private float[,] quadrants;
+    private Vector2 centrePosition;
 
     private GameObject waypoint;
 
@@ -37,8 +38,10 @@ public class Waypoints : MonoBehaviour {
 
         pointerBounds = new Bounds(new Vector3(Screen.width / 2, Screen.height / 2, 0), new Vector3(pBoundsWidth, pBoundsHeight, 0));
 
-        arctangentValue = Mathf.Atan(pBoundsHeight / pBoundsWidth);
-        quadrants = new float[4, 2];
+        centrePosition = new Vector2(halfPBoundsWidth + pointerBounds.min.x, halfPBoundsHeight + pointerBounds.min.y);
+
+        arctangentValue = Mathf.Atan2(pBoundsHeight, pBoundsWidth);
+        quadrants = new float[3, 2];
         //right
         quadrants[0, 0] = -arctangentValue;
         quadrants[0, 1] = arctangentValue;
@@ -48,9 +51,6 @@ public class Waypoints : MonoBehaviour {
         //left
         quadrants[2, 0] = Mathf.PI - arctangentValue;
         quadrants[2, 1] = Mathf.PI + arctangentValue;
-        //down
-        quadrants[3, 0] = Mathf.PI + arctangentValue;
-        quadrants[3, 1] = -arctangentValue;
     }
     
     void Update() {
@@ -65,42 +65,43 @@ public class Waypoints : MonoBehaviour {
             checkClosestBody(transform);
         }
 
-        Debug.DrawLine(playerTransform.position, closestPosition, Color.green, 0.1f);
+        //find rotation angle between player and closest body
+        Vector3 offsetDir = playerTransform.position - closestPosition;
+        float rot = Mathf.Atan2(offsetDir.y, offsetDir.x);
+        float angle = -(rot - Mathf.PI);
 
-        /*Ray ray = new Ray(playerTransform.position, closestPosition - playerTransform.position);
-        pointerBounds.IntersectRay(ray);
+        //make sure angle is within range of quadrant sections
+        if(angle > twoPi - arctangentValue) {
+            angle -= twoPi;
+        }
 
-        Vector3 pos = pointerBounds.ClosestPoint(Camera.main.WorldToScreenPoint(closestPosition));*/
+        //rotate the pointer image to point at the target object
+        Vector2.Angle(Camera.main.WorldToScreenPoint(playerTransform.position), Camera.main.WorldToScreenPoint(offsetDir));
+        waypoint.transform.rotation = Quaternion.Euler(0, 0, rot * Mathf.Rad2Deg);
 
-
-        Vector3 offsetDir = closestPosition - playerTransform.position;
-        float angle = Mathf.Atan2(offsetDir.y, offsetDir.x) + Mathf.PI;
-        //Vector2.Angle(Camera.main.WorldToScreenPoint(playerTransform.position), Camera.main.WorldToScreenPoint(offsetDir));//
-        //waypoint.transform.rotation = Quaternion.Euler(0, 0, angle);
-
-        Debug.Log("a" + angle);
-
-        /*Vector3 pos = Camera.main.WorldToScreenPoint(closestPosition);
-        pos.x = Mathf.Clamp(pos.x, pointerBounds.min.x, pointerBounds.max.x);
-        pos.y = Mathf.Clamp(pos.y, pointerBounds.min.y, pointerBounds.max.y);
-        pos.z = transform.position.z;*/
-
-        //Debug.Log("cp:" + closestPosition + ", p:" + pos + ", pp:" + playerPosition + ", d:" + closestDistance + ", a:" + angle);
-
+        //place the waypoint at the point on the bounds in the direction
         waypoint.transform.position = PointOnBounds(angle);
     }
 
-    public Vector2 PointOnBounds(int quadrantGroup, float angle) {
-        if(quadrantGroup == 0) {
-            return new Vector2(0, halfPBoundsWidth * Mathf.Tan(angle) - halfPBoundsHeight);
-        }
-        return new Vector2((pBoundsHeight / (2 * Mathf.Tan(angle))) - halfPBoundsWidth, 0);
-    }
     public Vector2 PointOnBounds(float angle) {
-        if((angle > quadrants[0,0] && angle > quadrants[0, 1]) || (angle > quadrants[2, 0] && angle > quadrants[2, 1])) {
-            return PointOnBounds(0, angle);
+        Vector2 returnVect = new Vector2(centrePosition.x, centrePosition.y);
+
+        //return vector based on the quadrant the angle lies between
+        if ((angle > quadrants[0,0] && angle <= quadrants[0, 1])) {
+            returnVect.x += halfPBoundsWidth;
+            returnVect.y += -1 * halfPBoundsWidth * Mathf.Tan(angle);
+        } else if ((angle > quadrants[1, 0] && angle <= quadrants[1, 1])) {
+            returnVect.x += pBoundsHeight / (2 * Mathf.Tan(angle));
+            returnVect.y += -1 * halfPBoundsHeight;
+        } else if((angle > quadrants[2, 0] && angle <= quadrants[2, 1])) {
+            returnVect.x += -1 * halfPBoundsWidth;
+            returnVect.y += halfPBoundsWidth * Mathf.Tan(angle);
+        } else {
+            returnVect.x += -1 * (pBoundsHeight / (2 * Mathf.Tan(angle)));
+            returnVect.y += halfPBoundsHeight;
         }
-        return PointOnBounds(1, angle);
+        
+        return returnVect;
     }
 
     public void createWaypoint() {
