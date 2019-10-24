@@ -20,7 +20,6 @@ public class StarSystemManager : MonoBehaviour {
         }
 
         waypoints.setCentreMass(centreMass.transform);
-        waypoints.createWaypoint();
     }
 
     public OrbitalDetails getOrbitalDetails(GameObject baseObject) {

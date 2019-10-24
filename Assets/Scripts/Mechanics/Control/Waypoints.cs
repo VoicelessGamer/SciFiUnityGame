@@ -6,7 +6,8 @@ public class Waypoints : MonoBehaviour {
     public GameObject wayPointIcon;
     public Transform playerTransform;
     public bool includeSubBodies;
-    //public int maxPointers;
+    [Range(0, 10)]
+    public int maxPointers;
 
     [Range(0, 1)]
     public float pointerBoundsWidthPercentage = 0.95f;
@@ -14,11 +15,13 @@ public class Waypoints : MonoBehaviour {
     public float pointerBoundsHeightPercentage = 0.95f;
 
     private Transform centreMass;
-    private Vector3 closestPosition;
-    private float closestDistance;
-    private Vector3 playerPosition;
-    private Bounds pointerBounds;
+    private List<Vector3> closestPositions;
+    private List<float> closestDistances;
+    private List<GameObject> waypoints;
 
+    //variables for rotating the waypoints and keeping the waypointa within screen bounds
+    private Bounds pointerBounds;
+    private Vector3 playerPosition;
     private float pBoundsWidth;
     private float pBoundsHeight;
     private float halfPBoundsWidth;
@@ -27,8 +30,6 @@ public class Waypoints : MonoBehaviour {
     private float arctangentValue;
     private float[,] quadrants;
     private Vector2 centrePosition;
-
-    private GameObject waypoint;
 
     void Awake() {
         pBoundsWidth = Screen.width * pointerBoundsWidthPercentage;
@@ -51,36 +52,54 @@ public class Waypoints : MonoBehaviour {
         //left
         quadrants[2, 0] = Mathf.PI - arctangentValue;
         quadrants[2, 1] = Mathf.PI + arctangentValue;
-    }
-    
+
+        closestPositions = new List<Vector3>();
+        closestDistances = new List<float>();
+        waypoints = new List<GameObject>();
+}
+
     void Update() {
-        if (centreMass == null || waypoint == null) {
+        if (centreMass == null) {
             return;
         }
 
         playerPosition = playerTransform.position;
-        closestDistance = 0;
-
+        //reset closest distances
+        closestDistances = new List<float>();
+        closestPositions = new List<Vector3>();
         foreach (Transform transform in centreMass.transform) {
             checkClosestBody(transform);
         }
 
-        //find rotation angle between player and closest body
-        Vector3 offsetDir = playerTransform.position - closestPosition;
-        float rot = Mathf.Atan2(offsetDir.y, offsetDir.x);
-        float angle = -(rot - Mathf.PI);
-
-        //make sure angle is within range of quadrant sections
-        if(angle > twoPi - arctangentValue) {
-            angle -= twoPi;
+        //limit the positions to max number of pointers
+        if(closestPositions.Count > maxPointers) {
+            closestPositions = closestPositions.GetRange(0, maxPointers);
+        }
+        //make sure correct number of pointers exist
+        if(waypoints.Count != closestPositions.Count) {
+            updateTotalWaypoints(closestPositions.Count);
         }
 
-        //rotate the pointer image to point at the target object
-        Vector2.Angle(Camera.main.WorldToScreenPoint(playerTransform.position), Camera.main.WorldToScreenPoint(offsetDir));
-        waypoint.transform.rotation = Quaternion.Euler(0, 0, rot * Mathf.Rad2Deg);
+        for(int i = 0; i < waypoints.Count; i++) {
+            GameObject waypoint = waypoints[i];
 
-        //place the waypoint at the point on the bounds in the direction
-        waypoint.transform.position = PointOnBounds(angle);
+            //find rotation angle between player and closest body
+            Vector3 offsetDir = playerTransform.position - closestPositions[i];
+            float rot = Mathf.Atan2(offsetDir.y, offsetDir.x);
+            float angle = -(rot - Mathf.PI);
+
+            //make sure angle is within range of quadrant sections
+            if (angle > twoPi - arctangentValue) {
+                angle -= twoPi;
+            }
+
+            //rotate the pointer image to point at the target object
+            Vector2.Angle(Camera.main.WorldToScreenPoint(playerTransform.position), Camera.main.WorldToScreenPoint(offsetDir));
+            waypoint.transform.rotation = Quaternion.Euler(0, 0, rot * Mathf.Rad2Deg);
+
+            //place the waypoint at the point on the bounds in the direction
+            waypoint.transform.position = PointOnBounds(angle);
+        }
     }
 
     public Vector2 PointOnBounds(float angle) {
@@ -104,8 +123,30 @@ public class Waypoints : MonoBehaviour {
         return returnVect;
     }
 
-    public void createWaypoint() {
-        waypoint = Instantiate(wayPointIcon, gameObject.transform, false);
+    public void createWaypoints(int count) {
+        for(int i = 0; i < count; i++) {
+            waypoints.Add(Instantiate(wayPointIcon, gameObject.transform, false));
+        }
+    }
+
+    public void updateTotalWaypoints(int total) {
+        if(waypoints.Count < total) {
+            createWaypoints(total - waypoints.Count);
+        } else {
+            destroyWaypoints(waypoints.Count - total);
+        }
+    }
+
+    public void destroyWaypoints(int count) {
+        if(waypoints.Count == 0) {
+            return;
+        }
+        int start = waypoints.Count - 1, end = waypoints.Count - count > 0 ? waypoints.Count - count : 0;
+        for (int i = start; i >= end; i--) {
+            GameObject ob = waypoints[i];
+            waypoints.Remove(ob);
+            Destroy(ob);
+        }
     }
 
     public void setCentreMass(Transform centreMass) {
@@ -115,9 +156,16 @@ public class Waypoints : MonoBehaviour {
     private void checkClosestBody(Transform transform) {
         float distance = Vector3.Distance(transform.position, playerPosition);
 
-        if (closestDistance == 0 || distance < closestDistance) {
-            closestPosition = transform.position;
-            closestDistance = distance;
+        int distCount = closestDistances.Count;
+        for (int i = 0; i < distCount; i++) {
+            if (distance < closestDistances[i]) {
+                closestDistances.Insert(i, distance);
+                closestPositions.Insert(i, transform.position);
+            }
+        }
+        if(closestDistances.Count == distCount) {
+            closestDistances.Add(distance);
+            closestPositions.Add(transform.position);
         }
 
         if(includeSubBodies && transform.childCount > 0) {

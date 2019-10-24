@@ -666,6 +666,7 @@ MonoBehaviour:
     type: 3}
   playerTransform: {fileID: 987091803}
   includeSubBodies: 0
+  maxPointers: 3
   pointerBoundsWidthPercentage: 0.9
   pointerBoundsHeightPercentage: 0.9
 --- !u!1 &1898875358
