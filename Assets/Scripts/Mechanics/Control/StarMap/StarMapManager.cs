@@ -11,17 +11,33 @@ public class StarMapManager : MonoBehaviour {
     }
 
     private void buildMap() {
-        GameObject icon = Instantiate(starmapIcon, new Vector3(0,0,0), Quaternion.identity);
+        GameObject icon = createIcon(new Vector3(0,0,0));
+
+        for(int i = 0; i < 5; i++) {
+
+        }
+
+        Vector3[] positions = new Vector3[2];
+        positions[0] = new Vector3(0, 0, 0);
+        positions[1] = new Vector3(10, 10, 0);
+
+        GameObject connection = createConnection(positions);
+    }
+
+    private GameObject createIcon(Vector3 position) {
+        GameObject icon = Instantiate(starmapIcon, position, Quaternion.identity);
         icon.name = "icon";
 
-        GameObject connection = Instantiate(new GameObject(), new Vector3(0, 0, 0), Quaternion.identity);
+        return icon;
+    }
+
+    private GameObject createConnection(Vector3[] positions) {
+        GameObject connection = new GameObject();
         connection.name = "connection";
         LineRenderer lineRenderer = connection.AddComponent<LineRenderer>();
 
-        Vector3[] positions = new Vector3[2];
-        positions[0] = new Vector3(0,0,0);
-        positions[1] = new Vector3(10, 10, 0);
-
         lineRenderer.SetPositions(positions);
+
+        return connection;
     }
 }
