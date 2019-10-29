@@ -5,6 +5,8 @@ using UnityEngine;
 public class StarMapManager : MonoBehaviour {
     public GameObject starmapIcon;
 
+    private readonly float twoPi = Mathf.PI * 2;
+
     // Start is called before the first frame update
     void Start() {
         buildMap();
@@ -14,14 +16,18 @@ public class StarMapManager : MonoBehaviour {
         GameObject icon = createIcon(new Vector3(0,0,0));
 
         for(int i = 0; i < 5; i++) {
+            float radAngle = Random.Range(0, twoPi);
+            Vector3 relativeDir = new Vector3(Mathf.Cos(radAngle), Mathf.Sin(radAngle), 0);
+            Vector3 newPosition = relativeDir * Random.Range(5, 30);
+            
+            icon = createIcon(newPosition);
 
+            Vector3[] positions = new Vector3[2];
+            positions[0] = new Vector3(0, 0, 0);
+            positions[1] = newPosition;
+
+            GameObject connection = createConnection(positions);
         }
-
-        Vector3[] positions = new Vector3[2];
-        positions[0] = new Vector3(0, 0, 0);
-        positions[1] = new Vector3(10, 10, 0);
-
-        GameObject connection = createConnection(positions);
     }
 
     private GameObject createIcon(Vector3 position) {
