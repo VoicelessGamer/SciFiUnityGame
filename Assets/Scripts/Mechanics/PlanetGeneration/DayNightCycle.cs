@@ -14,8 +14,12 @@ public class DayNightCycle : MonoBehaviour
 
     public float rotateSpeed;
     public float radius;
+    public bool affectTime;
     private Vector2 _centre;
-    public float _angle;
+    public float fullDay;
+    private float startOfNight;
+
+    public float _timeofDay;
 
     // Start is called before the first frame update
     void Start()
@@ -31,17 +35,36 @@ public class DayNightCycle : MonoBehaviour
 
         sr.sprite = spr;
 
-
         _centre = transform.position;
+
+        Time.timeScale = 1.0f;
+        startOfNight = fullDay / 3;
     }
 
     // Update is for curve of the sun/moon
     void Update()
     {
         _centre = new Vector2(cam.transform.position.x, cam.transform.position.y);
-        _angle += rotateSpeed * Time.deltaTime;
-        var offset = new Vector2(Mathf.Sin(_angle), Mathf.Cos(_angle)) * radius;
+        _timeofDay += rotateSpeed * Time.deltaTime;
+        var offset = new Vector2(Mathf.Sin(_timeofDay), Mathf.Cos(_timeofDay)) * radius;
+
         transform.position = _centre + offset;
         
+        if (_timeofDay >= fullDay)
+            _timeofDay = 0;
+        Debug.Log(_timeofDay);
+
+        if (affectTime)
+        {
+            if (_timeofDay >= startOfNight && _timeofDay <= (fullDay - startOfNight))
+            {
+                Debug.Log("Night Time");
+            }
+            else
+            {
+                Debug.Log("Day Time");
+            }
+        }
+
     }
 }
