@@ -18,7 +18,8 @@ public class DayNightCycle : MonoBehaviour
     private Vector2 _centre;
     public float fullDay;
     private float startOfNight;
-
+    private float startOfDay;
+    
     public float _timeofDay;
 
     // Start is called before the first frame update
@@ -29,7 +30,7 @@ public class DayNightCycle : MonoBehaviour
         horizontalSize = verticalSize * Screen.width / Screen.height;
         sr = gameObject.AddComponent<SpriteRenderer>() as SpriteRenderer;
         sr.color = new Color(0.9f, 0.9f, 0.9f, 1.0f);
-        sr.sortingOrder = 1;
+        sr.sortingOrder = 0;
         transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, 0.0f);
         spr = Sprite.Create(t2d, new Rect(0.0f, 0.0f, t2d.width, t2d.height), new Vector2(0.5f, 0.5f), 100.0f);
 
@@ -38,7 +39,12 @@ public class DayNightCycle : MonoBehaviour
         _centre = transform.position;
 
         Time.timeScale = 1.0f;
-        startOfNight = fullDay / 3;
+        startOfNight = fullDay / 5;// fullDay / 4;
+        startOfDay = fullDay - (fullDay / 3);
+        
+         this.GetComponentInChildren<Light>().intensity = 1f;
+
+        
     }
 
     // Update is for curve of the sun/moon
@@ -56,13 +62,16 @@ public class DayNightCycle : MonoBehaviour
 
         if (affectTime)
         {
-            if (_timeofDay >= startOfNight && _timeofDay <= (fullDay - startOfNight))
+            if (_timeofDay >= startOfNight && _timeofDay <= startOfDay)
             {
-                Debug.Log("Night Time");
+                if(this.GetComponentInChildren<Light>().intensity > 0.1)
+                    this.GetComponentInChildren<Light>().intensity -= 0.03f * rotateSpeed;
             }
             else
             {
-                Debug.Log("Day Time");
+                if (this.GetComponentInChildren<Light>().intensity < 1f)
+                    this.GetComponentInChildren<Light>().intensity += 0.04f * rotateSpeed;
+
             }
         }
 
