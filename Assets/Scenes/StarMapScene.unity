@@ -151,8 +151,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   starmapIcon: {fileID: 613357646364661341, guid: 6b8548782d7d10047a2c98965fe61cb6,
     type: 3}
-  minNewConnections: 2
+  minNewConnections: 1
   maxNewConnections: 2
+  safetyAngle: 20
+  minimumConnectionDistance: 10
+  maximumConnectionDistance: 50
+  TESTERINT: 3
 --- !u!4 &444037817
 Transform:
   m_ObjectHideFlags: 0
