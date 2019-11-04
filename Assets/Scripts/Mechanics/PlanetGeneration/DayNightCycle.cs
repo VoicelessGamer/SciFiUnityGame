@@ -16,16 +16,17 @@ public class DayNightCycle : MonoBehaviour
     public float radius;
     public bool affectTime;
     private Vector2 _centre;
-    public float fullDay;
+    public float fullDayDegrees;
     private float startOfNight;
     private float startOfDay;
+    private float fullDay;
     
     public float _timeofDay;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        fullDay = Mathf.Deg2Rad * fullDayDegrees;
         verticalSize = cam.GetComponent<Camera>().orthographicSize * 2.0;
         horizontalSize = verticalSize * Screen.width / Screen.height;
         sr = gameObject.AddComponent<SpriteRenderer>() as SpriteRenderer;
@@ -40,7 +41,7 @@ public class DayNightCycle : MonoBehaviour
 
         Time.timeScale = 1.0f;
         startOfNight = fullDay / 5;// fullDay / 4;
-        startOfDay = fullDay - (fullDay / 3);
+        startOfDay = fullDay - (fullDay / 4);
         
          this.GetComponentInChildren<Light>().intensity = 1f;
 
@@ -64,13 +65,13 @@ public class DayNightCycle : MonoBehaviour
         {
             if (_timeofDay >= startOfNight && _timeofDay <= startOfDay)
             {
-                if(this.GetComponentInChildren<Light>().intensity > 0.1)
+                if(this.GetComponentInChildren<Light>().intensity > 0.3)
                     this.GetComponentInChildren<Light>().intensity -= 0.03f * rotateSpeed;
             }
             else
             {
                 if (this.GetComponentInChildren<Light>().intensity < 1f)
-                    this.GetComponentInChildren<Light>().intensity += 0.04f * rotateSpeed;
+                    this.GetComponentInChildren<Light>().intensity += 0.03f * rotateSpeed;
 
             }
         }

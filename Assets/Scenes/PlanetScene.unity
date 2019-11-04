@@ -151,10 +151,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 519420028}
   t2d: {fileID: 2800000, guid: 40282124d129b6b4e8ad6089de4cb480, type: 3}
-  rotateSpeed: 0.01
+  rotateSpeed: 0.1
   radius: 12
   affectTime: 1
-  fullDay: 6.285
+  fullDayDegrees: 360
   _timeofDay: 0
 --- !u!4 &206346239
 Transform:
@@ -6542,7 +6542,7 @@ MonoBehaviour:
   rotateSpeed: 0.015
   radius: 12
   affectTime: 0
-  fullDay: 6.285
+  fullDayDegrees: 360
   _timeofDay: 3
 --- !u!4 &1950952720
 Transform:
