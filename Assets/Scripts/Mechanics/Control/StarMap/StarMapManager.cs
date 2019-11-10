@@ -81,6 +81,11 @@ public class StarMapManager : MonoBehaviour {
             clockwiseAngle = generationZone[0] + radSafteyAngle;
             antiClockwiseAngle = generationZone[1] - radSafteyAngle;
 
+            if(clockwiseAngle >= antiClockwiseAngle) {
+                i = connectionsToCreate;
+                continue;
+            }
+
             //get new angle
             float randAngle = Random.Range(clockwiseAngle, antiClockwiseAngle);
             float radAngle = originDirectionOffset + randAngle;
@@ -90,11 +95,9 @@ public class StarMapManager : MonoBehaviour {
             //create new system in caculated position
             GameObject icon = createIcon(newPosition);
             connectedSystems.Add(icon);
-            updateOuterPolygon(newPosition, expandPointIndex, randAngle > 0, originDirectionOffset, randAngle, clockwiseAngle, antiClockwiseAngle);
-            for (int j = 0; j < outerSystemPolygon.Count; j++) {
-                Debug.Log("OP " + j + ": " + outerSystemPolygon[j]);
-            }
-            Debug.Log("---------------------------");
+
+            //add point to outer polygon
+            outerSystemPolygon.Insert(randAngle > 0 ? expandPointIndex : getWrappedOuterPolygonIndex(expandPointIndex + 1), newPosition);
 
             Vector3[] positions = new Vector3[2];
             positions[0] = systemPoint;
@@ -107,56 +110,58 @@ public class StarMapManager : MonoBehaviour {
         }
 
         systemConnections[system].connectedSystems = connectedSystems;
-    }
 
-    private void updateOuterPolygon(Vector2 newPosition, int expandPointIndex, bool isPrevious, float off, float ran, float cl, float acl) {
-        if(outerSystemPolygon.Count < 2) {
-            outerSystemPolygon.Add(newPosition);
-            return;
-        } else if (outerSystemPolygon.Count == 2) {
-            int np = isPrevious ? expandPointIndex : getWrappedOuterPolygonIndex(expandPointIndex + 1);
-            outerSystemPolygon.Insert(np, newPosition);
-            return;
-        }
+        if (outerSystemPolygon.Count > 3) {
+            expandPointIndex = outerSystemPolygon.IndexOf(searchPoint);
 
-        Vector2[] trianglePolygon;
-
-        int newIndex = isPrevious ? expandPointIndex : expandPointIndex + 1;
-
-        trianglePolygon = new Vector2[3] {
-            outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - 1)],
-            newPosition,
-            outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex + 1)]
-        };
-
-        if(Utility.isPointInPolygon(outerSystemPolygon[expandPointIndex], trianglePolygon)) {
-            outerSystemPolygon[expandPointIndex] = newPosition;
-            if(outerSystemPolygon.Count == 3) {
+            //point must be on the outer polygon to create new points
+            if (expandPointIndex == -1) {
                 return;
             }
-        } else {
-            outerSystemPolygon.Insert(getWrappedOuterPolygonIndex(newIndex), newPosition);
-        }
 
-        int checkIndexOffset;
-
-        if (isPrevious) {
-            trianglePolygon = new Vector2[3] {
-                outerSystemPolygon[getWrappedOuterPolygonIndex(newIndex)],
-                outerSystemPolygon[getWrappedOuterPolygonIndex(newIndex + 1)],
-                new Vector2()
-            };
-            checkIndexOffset = 2;
+            foreach (GameObject go in connectedSystems) {
+                updateOuterPolygon(expandPointIndex);
+                for (int j = 0; j < outerSystemPolygon.Count; j++) {
+                    Debug.Log("OP " + j + ": " + outerSystemPolygon[j]);
+                }
+                Debug.Log("---------------------------");
+            }
         } else {
-            trianglePolygon = new Vector2[3] {
-                outerSystemPolygon[getWrappedOuterPolygonIndex(newIndex - 1)],
-                outerSystemPolygon[getWrappedOuterPolygonIndex(newIndex)],
-                new Vector2()
-            };
-            checkIndexOffset = 3;
+            for (int j = 0; j < outerSystemPolygon.Count; j++) {
+                Debug.Log("OP " + j + ": " + outerSystemPolygon[j]);
+            }
+            Debug.Log("---------------------------");
         }
+    }
+
+    private void updateOuterPolygon(int expandPointIndex) {
+        List<Vector2> checkPolygon = new List<Vector2>();
 
         Vector2 checkPoint;
+
+        bool expandOriginRemoved = false;
+
+        for (int i = 0; i < outerSystemPolygon.Count; i++) {
+            if(i != expandPointIndex) {
+                checkPolygon.Add(outerSystemPolygon[i]);
+            }
+        }
+
+        checkPoint = outerSystemPolygon[expandPointIndex];
+
+        if (Utility.isPointInPolygon(checkPoint, checkPolygon)) {
+            outerSystemPolygon = checkPolygon;
+            expandOriginRemoved = true;
+        }
+
+        int checkIndexOffset = 2;
+
+        /*int newIndex = isPrevious ? expandPointIndex : expandPointIndex + 1;*/
+        checkPolygon = new List<Vector2>() {
+            outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex)],
+            outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex + 1)],
+            new Vector2()
+        };
 
         List<Vector2> removablePoints = new List<Vector2>();
 
@@ -164,10 +169,10 @@ public class StarMapManager : MonoBehaviour {
 
         //update against previous points
         while (continueIterations) {
-            trianglePolygon[2] = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - checkIndexOffset)];
+            checkPolygon[2] = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - checkIndexOffset)];
             checkPoint = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - (checkIndexOffset - 1))];
 
-            continueIterations = Utility.isPointInPolygon(checkPoint, trianglePolygon);
+            continueIterations = Utility.isPointInPolygon(checkPoint, checkPolygon);
 
             if(continueIterations) {
                 removablePoints.Add(checkPoint);
@@ -175,30 +180,21 @@ public class StarMapManager : MonoBehaviour {
             }
         }
 
-        if (isPrevious) {
-            trianglePolygon = new Vector2[3] {
-                outerSystemPolygon[getWrappedOuterPolygonIndex(newIndex - 1)],
-                outerSystemPolygon[getWrappedOuterPolygonIndex(newIndex)],
-                new Vector2()
-            };
-            checkIndexOffset = 2;
-        } else {
-            trianglePolygon = new Vector2[3] {
-                outerSystemPolygon[getWrappedOuterPolygonIndex(newIndex)],
-                outerSystemPolygon[getWrappedOuterPolygonIndex(newIndex + 1)],
-                new Vector2()
-            };
-            checkIndexOffset = 3;
-        }
+        checkIndexOffset = 2;
+        checkPolygon = new List<Vector2>() {
+            outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - (expandOriginRemoved ? 2 : 1))],
+            outerSystemPolygon[getWrappedOuterPolygonIndex(expandOriginRemoved ? expandPointIndex - 1 : expandPointIndex)],
+            new Vector2()
+        };
 
         continueIterations = true;
 
         //update against next points
         while (continueIterations) {
-            trianglePolygon[2] = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex + checkIndexOffset)];
+            checkPolygon[2] = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex + checkIndexOffset)];
             checkPoint = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex + (checkIndexOffset - 1))];
 
-            continueIterations = Utility.isPointInPolygon(checkPoint, trianglePolygon);
+            continueIterations = Utility.isPointInPolygon(checkPoint, checkPolygon);
 
             if (continueIterations) {
                 removablePoints.Add(checkPoint);
