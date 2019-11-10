@@ -23,6 +23,13 @@ public class PlanetManager : MonoBehaviour
     public Tile grassTile;//temporary (replace with class that alters the 1's in the generated tile mapping array)
     public Dictionary<int, Tile> tiles;
 
+    //background
+    public List<Sprite> sbackgrounds;
+    public GameObject camera;
+    public Material mat;
+    public GameObject backgroundPrefab;
+    private List<GameObject> backgrounds;
+
     [SerializeField]
     private Dictionary<int, int[,]> planetTileMappings;
 
@@ -51,6 +58,11 @@ public class PlanetManager : MonoBehaviour
         tileMapAlteration = TileMapAlterationFactory.getSectionBuilder("TOP_LAYER");
 
         planetTileMappings = SaveLoadManager.loadTileMappings();
+
+        //background
+        backgrounds = new List<GameObject>();
+        BackgroundGenerator backgroundGenerator = new BackgroundGenerator();
+        backgrounds = backgroundGenerator.backgroundGen(sbackgrounds, camera, false, true, mat, backgroundPrefab);
 
         //eventually array will be generated from a starting section and surrounding positions
         generateSectionsInView(0);
