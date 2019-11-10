@@ -13,6 +13,7 @@ public class StarMapManager : MonoBehaviour {
     public float safetyAngle;
     public float minimumConnectionDistance;
     public float maximumConnectionDistance;
+    public bool debugOuterPolygon;
 
     private float radSafteyAngle;
     private readonly float twoPi = Mathf.PI * 2;
@@ -21,8 +22,6 @@ public class StarMapManager : MonoBehaviour {
     private List<Vector2> outerSystemPolygon;
 
     public int TESTERINT = 5;
-    public List<Vector3> testArr = new List<Vector3>() { new Vector3(0, 0, 0), new Vector3(17.4f, -36.1f, 0), new Vector3(16.8f, -10.6f, 0) };
-    public int testInt2 = 0;
 
     // Start is called before the first frame update
     void Start() {
@@ -30,6 +29,14 @@ public class StarMapManager : MonoBehaviour {
         outerSystemPolygon = new List<Vector2>();
         systemConnections = new Dictionary<GameObject, ConnectionInformation>();
         buildMap();
+    }
+
+    private void Update() {
+        if(debugOuterPolygon && outerSystemPolygon.Count > 1) {
+            for(int i = 0; i < outerSystemPolygon.Count; i++) {
+                Debug.DrawLine(outerSystemPolygon[i], outerSystemPolygon[getWrappedOuterPolygonIndex(i + 1)]);
+            }
+        }
     }
 
     private void buildMap() {
@@ -154,12 +161,11 @@ public class StarMapManager : MonoBehaviour {
             expandOriginRemoved = true;
         }
 
-        int checkIndexOffset = 2;
+        int checkIndexOffset = 3;
 
-        /*int newIndex = isPrevious ? expandPointIndex : expandPointIndex + 1;*/
         checkPolygon = new List<Vector2>() {
+            outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - 1)],
             outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex)],
-            outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex + 1)],
             new Vector2()
         };
 
@@ -180,10 +186,10 @@ public class StarMapManager : MonoBehaviour {
             }
         }
 
-        checkIndexOffset = 2;
+        checkIndexOffset = expandOriginRemoved ? 2 : 3;
         checkPolygon = new List<Vector2>() {
-            outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - (expandOriginRemoved ? 2 : 1))],
             outerSystemPolygon[getWrappedOuterPolygonIndex(expandOriginRemoved ? expandPointIndex - 1 : expandPointIndex)],
+            outerSystemPolygon[getWrappedOuterPolygonIndex(expandOriginRemoved ? expandPointIndex : expandPointIndex + 1)],
             new Vector2()
         };
 

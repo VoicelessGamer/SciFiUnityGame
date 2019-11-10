@@ -156,11 +156,8 @@ MonoBehaviour:
   safetyAngle: 20
   minimumConnectionDistance: 10
   maximumConnectionDistance: 50
-  TESTERINT: 2
-  testArr:
-  - {x: 17.4, y: -36.1, z: 0}
-  - {x: 16.8, y: -10.6, z: 0}
-  testInt2: 0
+  debugOuterPolygon: 0
+  TESTERINT: 1
 --- !u!4 &444037817
 Transform:
   m_ObjectHideFlags: 0
