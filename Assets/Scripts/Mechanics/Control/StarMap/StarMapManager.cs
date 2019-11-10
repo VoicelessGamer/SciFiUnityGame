@@ -21,14 +21,15 @@ public class StarMapManager : MonoBehaviour {
     private Dictionary<GameObject, ConnectionInformation> systemConnections;
     private List<Vector2> outerSystemPolygon;
 
-    public int TESTERINT = 5;
-
     // Start is called before the first frame update
     void Start() {
         radSafteyAngle = safetyAngle * Mathf.Deg2Rad;
         outerSystemPolygon = new List<Vector2>();
         systemConnections = new Dictionary<GameObject, ConnectionInformation>();
-        buildMap();
+
+        GameObject initialSystem = createIcon(new Vector3(0, 0, 0));
+        systemConnections.Add(initialSystem, new ConnectionInformation(null, new List<GameObject>()));
+        outerSystemPolygon.Add(new Vector2(0, 0));
     }
 
     private void Update() {
@@ -39,25 +40,12 @@ public class StarMapManager : MonoBehaviour {
         }
     }
 
-    private void buildMap() {
-        GameObject initialSystem = createIcon(new Vector3(0, 0, 0));
-        systemConnections.Add(initialSystem, new ConnectionInformation(null, new List<GameObject>()));
-        outerSystemPolygon.Add(new Vector2(0, 0));
+    public void addConnectionsToLastSystem() {
+        GameObject[] keys = new GameObject[systemConnections.Count];
+        systemConnections.Keys.CopyTo(keys, 0);
+
+        GameObject initialSystem = keys[keys.Length - 1];
         generateConnectedSystems(initialSystem);
-
-        int index = 1;
-        while (TESTERINT > 0) {
-            TESTERINT -= 1;
-
-            GameObject[] keys = new GameObject[systemConnections.Count];
-            systemConnections.Keys.CopyTo(keys, 0);
-
-            for (int i = index; i < keys.Length; i++) {
-                generateConnectedSystems(keys[i]);
-            }
-
-            index = keys.Length;
-        }
     }
 
     private void generateConnectedSystems(GameObject system) {
@@ -171,16 +159,17 @@ public class StarMapManager : MonoBehaviour {
 
         List<Vector2> removablePoints = new List<Vector2>();
 
-        bool continueIterations = true;
+        //bool continueIterations = true;
 
         //update against previous points
-        while (continueIterations) {
+        //while (continueIterations) {
+        for(int i = 0; i < outerSystemPolygon.Count; i++) { 
             checkPolygon[2] = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - checkIndexOffset)];
             checkPoint = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - (checkIndexOffset - 1))];
 
-            continueIterations = Utility.isPointInPolygon(checkPoint, checkPolygon);
+            //continueIterations = Utility.isPointInPolygon(checkPoint, checkPolygon);
 
-            if(continueIterations) {
+            if(Utility.isPointInPolygon(checkPoint, checkPolygon)) {
                 removablePoints.Add(checkPoint);
                 checkIndexOffset++;
             }
@@ -193,16 +182,17 @@ public class StarMapManager : MonoBehaviour {
             new Vector2()
         };
 
-        continueIterations = true;
+        //continueIterations = true;
 
         //update against next points
-        while (continueIterations) {
+        //while (continueIterations) {
+        for (int i = 0; i < outerSystemPolygon.Count; i++) {
             checkPolygon[2] = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex + checkIndexOffset)];
             checkPoint = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex + (checkIndexOffset - 1))];
 
-            continueIterations = Utility.isPointInPolygon(checkPoint, checkPolygon);
+            //continueIterations = Utility.isPointInPolygon(checkPoint, checkPolygon);
 
-            if (continueIterations) {
+            if (Utility.isPointInPolygon(checkPoint, checkPolygon)) {
                 removablePoints.Add(checkPoint);
                 checkIndexOffset++;
             }
