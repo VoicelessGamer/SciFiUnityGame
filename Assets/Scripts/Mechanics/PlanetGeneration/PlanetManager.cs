@@ -28,7 +28,8 @@ public class PlanetManager : MonoBehaviour
     public GameObject camera;
     public Material mat;
     public GameObject backgroundPrefab;
-    private List<GameObject> backgrounds;
+    private List<Background> backgrounds;
+    private List<GameObject> createdBackgrounds;
 
     [SerializeField]
     private Dictionary<int, int[,]> planetTileMappings;
@@ -59,14 +60,9 @@ public class PlanetManager : MonoBehaviour
 
         planetTileMappings = SaveLoadManager.loadTileMappings();
 
-        //background
-        backgrounds = new List<GameObject>();
-        BackgroundGenerator backgroundGenerator = new BackgroundGenerator();
-        backgrounds = backgroundGenerator.backgroundGen(sbackgrounds, camera, false, true, mat, backgroundPrefab);
-
         //eventually array will be generated from a starting section and surrounding positions
         generateSectionsInView(0);
-
+        generateBackgrounds();
         SaveLoadManager.saveTileMappings(planetTileMappings);
     }
 
@@ -114,6 +110,27 @@ public class PlanetManager : MonoBehaviour
 
             //store for later use (loading new sections, deleting old)
             sections.Add(new Section(index, instantiatedSection));
+        }
+    }
+
+    public void generateBackgrounds()
+    {
+
+        //background
+        backgrounds = new List<Background>();
+        BackgroundGenerator backgroundGenerator = new BackgroundGenerator();
+        backgrounds = backgroundGenerator.backgroundGen(sbackgrounds, false, true, backgroundPrefab);
+
+        for(int i = 0; i < backgrounds.Count; i++)
+        {
+            createdBackgrounds.Add((GameObject)Instantiate(backgroundPrefab, backgrounds[i].getPosition(), Quaternion.identity));
+            createdBackgrounds[i].GetComponent<Parallex>().parallaxEffect = backgrounds[i].getParallexX();
+            createdBackgrounds[i].GetComponent<Parallex>().parallaxEffectY = backgrounds[i].getParallexY();
+            createdBackgrounds[i].GetComponent<Parallex>().cam = camera;
+            createdBackgrounds[i].GetComponent<SpriteRenderer>().sprite = backgrounds[i].getSprite();
+            createdBackgrounds[i].GetComponent<SpriteRenderer>().transform.position = backgrounds[i].getPosition();
+            createdBackgrounds[i].GetComponent<SpriteRenderer>().sortingOrder = backgrounds[i].getOrderLayer();
+            createdBackgrounds[i].GetComponent<SpriteRenderer>().material = mat;
         }
     }
 
