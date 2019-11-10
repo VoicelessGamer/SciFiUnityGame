@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Utilities;
 
 public class ShipEditor : MonoBehaviour {
 
@@ -97,7 +98,7 @@ public class ShipEditor : MonoBehaviour {
                     //local position translated to world coordinates
                     Vector3 worldPos = tilemap.CellToWorld(localPos);
                     //if position already occupied then can't be placed
-                    if (occupiedSpaces.Contains(worldPos) || !isPointInPolygon(worldPos)) {
+                    if (occupiedSpaces.Contains(worldPos) || !Utility.isPointInPolygon(worldPos, gridPolygonBounds)) {
                         return false;
                     } else {
                         //add the world position to a list 
@@ -138,25 +139,6 @@ public class ShipEditor : MonoBehaviour {
     public void removeAttatchedObject() {
         Destroy(attatchedObject);
         attatchedObject = null;
-    }
-
-    public bool isPointInPolygon(Vector2 point) {
-        int polygonLength = gridPolygonBounds.Length, i = 0;
-        bool inside = false;
-        // x, y for tested point.
-        float pointX = point.x, pointY = point.y;
-        // start / end point for the current polygon segment.
-        float startX, startY, endX, endY;
-        Vector2 endPoint = gridPolygonBounds[polygonLength - 1];
-        endX = endPoint.x;
-        endY = endPoint.y;
-        while (i < polygonLength) {
-            startX = endX; startY = endY;
-            endPoint = gridPolygonBounds[i++];
-            endX = endPoint.x; endY = endPoint.y;
-            inside ^= (endY > pointY ^ startY > pointY) && ((pointX - endX) < (pointY - endY) * (startX - endX) / (startY - endY));
-        }
-        return inside;
     }
 
     public void changeEditorMode(int newMode) {
