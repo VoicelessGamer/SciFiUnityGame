@@ -34,9 +34,7 @@ public class StarMapManager : MonoBehaviour {
 
     private void Update() {
         if(debugOuterPolygon && outerSystemPolygon.Count > 1) {
-            for(int i = 0; i < outerSystemPolygon.Count; i++) {
-                Debug.DrawLine(outerSystemPolygon[i], outerSystemPolygon[getWrappedOuterPolygonIndex(i + 1)]);
-            }
+            Utility.drawPolygon(outerSystemPolygon, Color.white);
         }
     }
 
@@ -107,7 +105,9 @@ public class StarMapManager : MonoBehaviour {
         systemConnections[system].connectedSystems = connectedSystems;
 
         if (outerSystemPolygon.Count > 3) {
-            expandPointIndex = outerSystemPolygon.IndexOf(searchPoint);
+            Debug.Log("---------------------------");
+            updateOuterPolygon();
+            /*expandPointIndex = outerSystemPolygon.IndexOf(searchPoint);
 
             //point must be on the outer polygon to create new points
             if (expandPointIndex == -1) {
@@ -120,87 +120,39 @@ public class StarMapManager : MonoBehaviour {
                     Debug.Log("OP " + j + ": " + outerSystemPolygon[j]);
                 }
                 Debug.Log("---------------------------");
-            }
+            }*/
         } else {
-            for (int j = 0; j < outerSystemPolygon.Count; j++) {
+            /*for (int j = 0; j < outerSystemPolygon.Count; j++) {
                 Debug.Log("OP " + j + ": " + outerSystemPolygon[j]);
             }
-            Debug.Log("---------------------------");
+            Debug.Log("---------------------------");*/
         }
     }
 
-    private void updateOuterPolygon(int expandPointIndex) {
-        List<Vector2> checkPolygon = new List<Vector2>();
+    private void updateOuterPolygon() {
+        List<Vector2> polyCopy = new List<Vector2>();
 
         Vector2 checkPoint;
-
-        bool expandOriginRemoved = false;
-
+         
         for (int i = 0; i < outerSystemPolygon.Count; i++) {
-            if(i != expandPointIndex) {
-                checkPolygon.Add(outerSystemPolygon[i]);
+            polyCopy.Add(outerSystemPolygon[i]);
+        }
+
+        for(int i = polyCopy.Count - 1; i >= 0; i--) {
+            checkPoint = polyCopy[i];
+            polyCopy.RemoveAt(i);
+            /*for (int j = 0; j < polyCopy.Count; j++) {
+                Debug.Log("OP " + j + ": " + polyCopy[j]);
+            }*/
+            //Debug.Log("cp: " + checkPoint);
+            bool pp = Utility.isPointInPolygon(checkPoint, polyCopy);
+            //Debug.Log("PP:" + pp);
+            if (!pp) {
+                polyCopy.Insert(i, checkPoint);
             }
         }
 
-        checkPoint = outerSystemPolygon[expandPointIndex];
-
-        if (Utility.isPointInPolygon(checkPoint, checkPolygon)) {
-            outerSystemPolygon = checkPolygon;
-            expandOriginRemoved = true;
-        }
-
-        int checkIndexOffset = 3;
-
-        checkPolygon = new List<Vector2>() {
-            outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - 1)],
-            outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex)],
-            new Vector2()
-        };
-
-        List<Vector2> removablePoints = new List<Vector2>();
-
-        //bool continueIterations = true;
-
-        //update against previous points
-        //while (continueIterations) {
-        for(int i = 0; i < outerSystemPolygon.Count; i++) { 
-            checkPolygon[2] = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - checkIndexOffset)];
-            checkPoint = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex - (checkIndexOffset - 1))];
-
-            //continueIterations = Utility.isPointInPolygon(checkPoint, checkPolygon);
-
-            if(Utility.isPointInPolygon(checkPoint, checkPolygon)) {
-                removablePoints.Add(checkPoint);
-                checkIndexOffset++;
-            }
-        }
-
-        checkIndexOffset = expandOriginRemoved ? 2 : 3;
-        checkPolygon = new List<Vector2>() {
-            outerSystemPolygon[getWrappedOuterPolygonIndex(expandOriginRemoved ? expandPointIndex - 1 : expandPointIndex)],
-            outerSystemPolygon[getWrappedOuterPolygonIndex(expandOriginRemoved ? expandPointIndex : expandPointIndex + 1)],
-            new Vector2()
-        };
-
-        //continueIterations = true;
-
-        //update against next points
-        //while (continueIterations) {
-        for (int i = 0; i < outerSystemPolygon.Count; i++) {
-            checkPolygon[2] = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex + checkIndexOffset)];
-            checkPoint = outerSystemPolygon[getWrappedOuterPolygonIndex(expandPointIndex + (checkIndexOffset - 1))];
-
-            //continueIterations = Utility.isPointInPolygon(checkPoint, checkPolygon);
-
-            if (Utility.isPointInPolygon(checkPoint, checkPolygon)) {
-                removablePoints.Add(checkPoint);
-                checkIndexOffset++;
-            }
-        }
-
-        for(int i = 0; i < removablePoints.Count; i++) {
-            outerSystemPolygon.Remove(removablePoints[i]);
-        }
+        outerSystemPolygon = polyCopy;
     }
 
     private int getWrappedOuterPolygonIndex(int currentIndex) {
